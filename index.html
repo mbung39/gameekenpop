@@ -86,3 +86,20 @@ function showZONEID() {
 
 // BELI UPGRADE + IKLAN
 function buyUpgrade
+function buyUpgrade(type, price) {
+  if(coins < price) return alert('Koin kurang bree!');
+  
+  // Potong koin dulu
+  coins -= price;
+  if(type == 'power') power += 1;
+  if(type == 'auto') auto += 1;
+  
+  updateUI();
+  alert('Upgrade Berhasil!');
+  
+  // Abis itu munculin iklan
+  showZONEID();
+}
+</script>
+</body>
+</html>
