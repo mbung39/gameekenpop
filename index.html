@@ -6,37 +6,47 @@
 <title>KenPOP Tap</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<!-- 1. ADSTERRA SOCIAL BAR -->
-<script type='text/javascript' src='//pl31204126.profitabledisplayformat.com/12/34/56/123456.js'></script>
+<!-- 1. ADSTERRA SOCIAL BAR - KEY BENER 31204126 -->
+<script type="text/javascript">
+	atOptions = {
+	'key' : '31204126',
+	'format' : 'iframe',
+	'height' : 1,
+	'width' : 1,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.profitabledisplayformat.com/31204126/invoke.js"></script>
 
 <style>
     * { 
     margin: 0; padding: 0; box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* HILANGIN BIRU KLIK */
     -webkit-user-select: none;
     user-select: none;
   }
   body { 
-    background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; 
-    min-height: 100vh; /* PENTING: pake min-height biar bisa scroll */
+    background: #1a1a2e; color: white; text-align: center; font-family: 'Segoe UI', sans-serif; 
+    min-height: 100vh; 
     padding: 10px;
     overflow-y: auto; /* BISA SCROLL KALO KEPANJANGAN */
   }
   #stats { 
     display: flex; justify-content: space-around; 
-    font-size: 28px; font-weight: 900; padding: 10px 0; /* GEDEIN LAGI */
+    font-size: 28px; font-weight: 900; padding: 10px 0;
     position: sticky; top: 0; background: #1a1a2e; z-index: 10;
   }
   #btn { 
-    width: 240px; height: 240px; /* BIKIN GEDE BANGET KAYAK SS */
+    width: 240px; height: 240px; /* LOGO GEDE BANGET */
     border: none; background: url('kenpop.png') no-repeat center; 
     background-size: contain; cursor: pointer; transition: 0.1s; outline: none; margin: 15px auto;
+    display: block;
   }
   #btn:active { transform: scale(0.9); }
   .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 12px; margin: 15px 10px; }
   .shop h3, .leaderboard h3 { font-size: 20px; margin-bottom: 10px; }
   .item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #3a3a5e; border-radius: 10px; margin: 8px 0; font-size: 16px; font-weight: bold; }
-  .buy-btn { background: gold; color: black; border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; }
+  .buy-btn { background: gold; color: black; border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; min-width: 140px; }
   .buy-btn:disabled { background: gray; color: #ccc; }
   #float { position: absolute; color: gold; font-weight: bold; font-size: 28px; animation: float 1s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
@@ -51,7 +61,7 @@
 
   <button id="btn"></button>
 
-  <!-- TEMPAT BANNER 300x250 -->
+  <!-- 2. ADSTERRA BANNER 300x250 - KEY BENER 31204127 -->
   <div id="ad-banner"></div>
 
   <div class="shop">
@@ -76,6 +86,8 @@
 
 <script>
 let tg = window.Telegram.WebApp;
+tg.expand(); // Biar fullscreen di Telegram
+
 let coins = parseInt(localStorage.getItem('coins')) || 0;
 let power = parseInt(localStorage.getItem('power')) || 1;
 let auto = parseInt(localStorage.getItem('auto')) || 0;
@@ -86,18 +98,19 @@ let lastAdTime = parseInt(localStorage.getItem('lastAdTime')) || 0;
 let autoInterval;
 let isWatchingAd = false;
 
-// FUNGSI IKLAN 18 DETIK
+// FUNGSI IKLAN 18 DETIK + PAKSA BUKA TAB
 function watchAdWithTimer(type, callback) {
   if(isWatchingAd) return alert('Tunggu iklan selesai dulu!');
   isWatchingAd = true;
   
   let btn = type === 'power' ? document.getElementById('btnPower') : document.getElementById('btnAuto');
-  let count = type === 'power' ? powerAdsWatched : autoAdsWatched;
   
   btn.disabled = true;
   let timer = 18;
 
-  if (typeof _pop === 'function') { _pop(); }
+  // PAKSA BUKA IKLAN ADSTERRA DI TAB BARU
+  window.open('https://www.profitabledisplayformat.com/31204126/invoke.js', '_blank');
+
   lastAdTime = Date.now();
   localStorage.setItem('lastAdTime', lastAdTime);
 
@@ -107,7 +120,7 @@ function watchAdWithTimer(type, callback) {
     if(timer < 0) {
       clearInterval(interval);
       isWatchingAd = false;
-      callback();
+      callback(); // KASIH REWARD
       if(type === 'power') powerAdsWatched++;
       if(type === 'auto') autoAdsWatched++;
       updateUI();
@@ -146,7 +159,7 @@ function updateUI() {
   tg.sendData(JSON.stringify({coins, power, auto}));
 }
 
-// TAP
+// TAP LOGO
 document.getElementById('btn').onclick = (e) => {
   coins += power;
   if(auto > 0) coins += auto;
@@ -155,7 +168,7 @@ document.getElementById('btn').onclick = (e) => {
   tg.HapticFeedback.impactOccurred('light');
 }
 
-// FLOATING TEXT
+// FLOATING TEXT +POWER
 function showFloat(text, e) {
   let float = document.createElement('div');
   float.id = 'float';
@@ -166,11 +179,11 @@ function showFloat(text, e) {
   setTimeout(()=>float.remove(), 1000);
 }
 
-// 2. ADSTERRA BANNER 300x250
-atOptions = { 'key' : '31204127', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+// 2. ADSTERRA BANNER 300x250 CODE
+atOptionsBanner = { 'key' : '31204127', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
 document.write('<scr' + 'ipt type="text/javascript" src="//www.profitabledisplayformat.com/31204127/invoke.js"></scr' + 'ipt>');
 
-// NONTON IKLAN
+// NONTON IKLAN BUAT POWER
 function watchAdForPower() {
   if(powerAdsWatched >= 3) return;
   watchAdWithTimer('power', () => {
@@ -181,12 +194,13 @@ function watchAdForPower() {
   });
 }
 
+// NONTON IKLAN BUAT AUTO
 function watchAdForAuto() {
   if(autoAdsWatched >= 5) return;
   watchAdWithTimer('auto', () => {
     if(autoAdsWatched + 1 >= 5) {
       auto = power; 
-      autoEndTime = Date.now() + 3600000; 
+      autoEndTime = Date.now() + 3600000; // 1 jam
       startAuto();
       alert('Auto Click Aktif 1 Jam!');
     }
@@ -210,11 +224,11 @@ function startAuto() {
   }, 1000);
 }
 
-// IKLAN OTOMATIS 5 MENIT
+// IKLAN OTOMATIS TIAP 5 MENIT
 setInterval(()=>{
   let now = Date.now();
-  if(now - lastAdTime >= 300000){
-    if (typeof _pop === 'function') { _pop(); }
+  if(now - lastAdTime >= 300000){ // 5 menit
+    window.open('https://www.profitabledisplayformat.com/31204126/invoke.js', '_blank');
     lastAdTime = now;
     localStorage.setItem('lastAdTime', lastAdTime);
   }
@@ -238,10 +252,10 @@ function loadLB() {
   document.getElementById('lb').innerHTML = `1. Kamu - ${coins.toLocaleString('id')} koin<br>2. Player2 - 1.200 koin<br>3. Player3 - 800 koin`;
 }
 
+// JALANIN PAS BUKA
 loadLB();
 updateUI();
 startAuto();
-tg.expand();
 </script>
 </body>
 </html>
