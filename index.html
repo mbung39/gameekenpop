@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V26.2</title>
+<title>KenPOP Tap V22.3</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V26.2</h2>
+  <h2>👋 SELAMAT DATANG V22.3</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -101,10 +101,9 @@ window.onload = function() {
     document.getElementById('welcomeBox').style.display = 'block';
     document.getElementById('w-nama').innerText = localStorage.kenpopNama;
     document.getElementById('w-wa').innerText = currentWA;
-    loadData(); 
+    loadData();
   }
-  
-  // LOGO BISA DIKLIK WALAUPUN BELUM LOGIN
+
   document.getElementById('logo').onclick = (e) => {
     if(!currentWA) return;
     let totalKlik = power + auto;
@@ -126,7 +125,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V26.2"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V22.3"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -164,7 +163,7 @@ function loadData(){
   let lastLogin = localStorage[getKey('lastLogin')] || "";
   if(lastLogin!== today){
     localStorage[getKey('power')] = 1; localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0;
-    localStorage[getKey('lastLogin')] = today; localStorage[getKey('lastAdTime')] = Date.now();
+    localStorage[getKey('lastLogin')] = today;
     localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0;
     if(lastLogin) alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
   }
@@ -175,7 +174,6 @@ function loadData(){
   pAds = +localStorage[getKey('pAds')] || 0;
   aAds = +localStorage[getKey('aAds')] || 0;
   autoEnd = +localStorage[getKey('autoEnd')] || 0;
-  lastAdTime = +localStorage[getKey('lastAdTime')] || Date.now();
   pTimer = +localStorage[getKey('pTimer')] || 0;
   aTimer = +localStorage[getKey('aTimer')] || 0;
 
@@ -184,16 +182,32 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // FIX: EVENT KLIK DIPINDAH KE SINI SETELAH getElementById
+  // FIX 1: 1 KLIK = 1 IKLAN + COOLDOWN
   btnPower.onclick = () => {
-    if(pAds >= 3 || power >= 50) return;
-    if(Date.now() - pTimer < 15000) return;
-    showAd(); pAds++; pTimer = Date.now(); save();
+    if(power >= 50) return;
+    if(Date.now() - pTimer < 15000) return; // KALO MASIH COOLDOWN
+    showAd(); // LANGSUNG IKLAN
+    pAds++; // LANGSUNG +1
+    pTimer = Date.now(); // LANGSUNG COOLDOWN
+    if(pAds >= 3){ // KALO UDAH 3
+      if(power < 50) power++; // NAIK LEVEL
+      pAds = 0; // RESET
+      alert(`Klik +1 Naik! Sekarang Total = +${power}`);
+    }
+    save();
   }
+
   btnAuto.onclick = () => {
-    if(aAds >= 6) return;
     if(Date.now() - aTimer < 15000) return;
-    showAd(); aAds++; aTimer = Date.now(); save();
+    showAd();
+    aAds++;
+    aTimer = Date.now();
+    if(aAds >= 6){
+      auto=power; autoEnd=Date.now()+3600000;
+      aAds=0;
+      alert('Auto Aktif 1 Jam!');
+    }
+    save();
   }
 
   save();
@@ -204,7 +218,6 @@ function showAd() {
   s.dataset.zone = '11780928';
   s.src = 'https://al5sm.com/tag.min.js';
   document.body.appendChild(s);
-  lastAdTime = Date.now(); localStorage[getKey('lastAdTime')] = lastAdTime;
 }
 
 function cekValidasi(type){
@@ -217,10 +230,6 @@ function cekValidasi(type){
     btn.disabled = true; btn.innerText = `Tunggu ${sisa}s...`; return false;
   } else {
     btn.disabled = false;
-    if(ads >= max){
-      if(type==='power' && power < 50){ power++; pAds=0; pTimer=0; alert(`Klik +1 Naik! Sekarang Total = +${power}`); }
-      if(type==='auto'){ auto=power; autoEnd=Date.now()+3600000; aAds=0; aTimer=0; alert('Auto Aktif 1 Jam!'); }
-    }
     return true;
   }
 }
@@ -275,7 +284,8 @@ function save(){
   if(!currentWA) return;
   let now = Date.now();
   if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; }
-  if(now - lastAdTime >= 300000){ showAd(); }
+  // FIX 2: HAPUS AUTO SPAM IKLAN TIAP 5 MENIT
+  // if(now - lastAdTime >= 300000){ showAd(); } <- UDAH GUA HAPUS
 
   localStorage[getKey('coins')]=coins; localStorage[getKey('power')]=power; localStorage[getKey('auto')]=auto;
   localStorage[getKey('pAds')]=pAds; localStorage[getKey('aAds')]=aAds; localStorage[getKey('autoEnd')]=autoEnd;
@@ -285,14 +295,12 @@ function save(){
   powerNowTxt.innerText = power;
   cekValidasi('power');
   if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
-  else if(pAds >= 3){ btnPower.innerText = "✅ Naikkan Klik"; }
-  else { btnPower.innerText = `Validasi ${pAds}/3`; }
+  else { btnPower.innerText = `Validasi ${pAds}/3`; } // UDAH GAK ADA "NAIKKAN KLIK" LAGI
+
   cekValidasi('auto');
   if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
     btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
-  } else if(aAds >= 6){
-    btnAuto.innerText = "✅ Aktifkan Auto";
   } else {
     btnAuto.innerText = `Validasi ${aAds}/6`;
   }
