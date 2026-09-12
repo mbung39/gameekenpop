@@ -131,27 +131,45 @@ window.onload = function() {
 }
 
 async function login() {
-  const nama = document.getElementById('nama').value;
-  const wa = document.getElementById('wa').value;
+  const nama = document.getElementById('nama').value.trim();
+  const wa = document.getElementById('wa').value.trim();
   const btn = document.querySelector('.btn-login');
+
   if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
   if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
-  btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  const data = { nama: nama, wa: wa, menu: "LOGIN BARU" };
-  try {
-    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-    localStorage.kenpopNama = nama; localStorage.kenpopWA = wa;
-    document.getElementById('w-nama').innerText = nama;
-    document.getElementById('w-wa').innerText = wa;
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('welcomeBox').style.display = 'block';
-    alert('Login Berhasil! Selamat bermain');
-  } catch (e) {
-    alert('Gagal login. Cek koneksi.');
-    btn.disabled = false; btn.innerText = 'MASUK GAME';
-  }
-}
 
+  // 1. CEK APAKAH HP INI UDAH ADA AKUN
+  if(localStorage.kenpopWA){
+    if(localStorage.kenpopWA === wa){
+      alert('Kamu sudah login dengan WA ini');
+    } else {
+      alert('1 HP hanya untuk 1 akun! \nAkun aktif: ' + localStorage.kenpopWA);
+      return;
+    }
+  } else {
+    // 2. KALAU BELUM ADA, DAFTAR BARU KE SHEET
+    btn.disabled = true; btn.innerText = 'MEMPROSES...';
+    const data = { nama: nama, wa: wa, menu: "LOGIN BARU" };
+    try {
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+    } catch (e) {
+      alert('Gagal daftar. Cek koneksi.');
+      btn.disabled = false; btn.innerText = 'MASUK GAME';
+      return;
+    }
+  }
+
+  // 3. SIMPAN DAN MASUK GAME
+  localStorage.kenpopNama = nama; 
+  localStorage.kenpopWA = wa;
+  document.getElementById('w-nama').innerText = nama;
+  document.getElementById('w-wa').innerText = wa;
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('welcomeBox').style.display = 'block';
+  alert('Login Berhasil! Selamat bermain');
+  
+  btn.disabled = false; btn.innerText = 'MASUK GAME';
+}
 let today = new Date().toISOString().split('T')[0];
 let lastLogin = localStorage.lastLogin || "";
 if(lastLogin!== today){
