@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KenPOP Tap</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- Ganti ini dengan kode Monetag Banner kamu -->
+<script src='//libtl.com/sdk.js' data-zone='PASTE_ZONE_ID_KAMU' data-sdk='show_8888'></script> 
+<style>
+  body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding: 10px; }
+  #stats { display: flex; justify-content: space-around; font-size: 20px; font-weight: bold; margin-bottom: 10px;}
+  #btn { width: 250px; height: 250px; border: none; background: url('kenpop.png') no-repeat center; background-size: contain; cursor: pointer; transition: 0.1s; }
+  #btn:active { transform: scale(0.9); }
+  .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 10px; margin-top: 15px; }
+  .item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #3a3a5e; border-radius: 10px; margin: 5px 0; }
+  .buy-btn { background: gold; color: black; border: none; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
+  #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; }
+  @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
+</style>
+</head>
+<body>
+  <div id="stats">
+    <div>Koin: <span id="coins">0</span></div>
+    <div>Level: <span id="level">1</span></div>
+  </div>
+
+  <button id="btn"></button>
+
+  <div class="shop">
+    <h3>🛒 SHOP</h3>
+    <div class="item">Klik +1 <button class="buy-btn" onclick="buyUpgrade('power', 50)">50 Koin + Iklan</button></div>
+    <div class="item">Auto Click <button class="buy-btn" onclick="buyUpgrade('auto', 200)">200 Koin + Iklan</button></div>
+  </div>
+
+  <div class="leaderboard">
+    <h3>🏆 TOP 10</h3>
+    <div id="lb">Loading...</div>
+  </div>
+
+<script>
+let tg = window.Telegram.WebApp;
+let user = tg.initDataUnsafe.user;
+let coins = parseInt(localStorage.getItem('coins')) || 0;
+let power = parseInt(localStorage.getItem('power')) || 1;
+let auto = parseInt(localStorage.getItem('auto')) || 0;
+
+function updateUI() {
+  document.getElementById('coins').innerText = coins;
+  document.getElementById('level').innerText = power;
+  localStorage.setItem('coins', coins);
+  localStorage.setItem('power', power);
+  localStorage.setItem('auto', auto);
+}
+
+// TAP
+document.getElementById('btn').onclick = (e) => {
+  coins += power;
+  showFloat('+'+power, e);
+  updateUI();
+  tg.HapticFeedback.impactOccurred('light');
+}
+
+// FLOATING TEXT
+function showFloat(text, e) {
+  let float = document.createElement('div');
+  float.id = 'float';
+  float.innerText = text;
+  float.style.left = e.clientX + 'px';
+  float.style.top = e.clientY + 'px';
+  document.body.appendChild(float);
+  setTimeout(()=>float.remove(), 1000);
+}
+
+// BELI UPGRADE + IKLAN
+function buyUpgrade(type, price) {
+  if(coins < price) return alert('Koin kurang!');
+  // Panggil iklan Monetag dulu
+  show_8888888().then(() => {
+    coins -= price;
+    if(type == 'power') power += 1;
+    if(type == 'auto') auto += 1;
+    alert('Upgrade Berhasil!');
+    updateUI();
+  }).catch(()=> alert('Nonton iklan dibatalkan'));
+}
+
+// AUTO CLICK
+setInterval(()=>{
+  if(auto > 0) { coins += auto; updateUI(); }
+}, 1000);
+
+// LEADERBOARD PALSU DULU - nanti ganti ke Supabase
+function loadLB() {
+  document.getElementById('lb').innerHTML = `
+  1. Kamu - ${coins} koin<br>
+  2. Player2 - 120 koin<br>
+    3. Player3 - 80 koin`;
+}
+loadLB();
+updateUI();
+tg.expand();
+</script>
+</body>
+</html>
