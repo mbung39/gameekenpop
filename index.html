@@ -34,6 +34,10 @@
 .btn-login { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
 .welcome { display:none; background:#334155; padding:15px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
 
+/* TOMBOL LOGOUT BARU */
+.btn-logout{ width:100%; padding:12px; background: linear-gradient(45deg, #e74c3c, #c0392b); color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px; }
+.btn-logout:hover{ background: linear-gradient(45deg, #c0392b, #a93226); }
+
 /* POPUP */
 .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center; }
 .popup-box { background:#1e293b; padding:20px; border-radius:15px; width:90%; max-width:400px; border:2px solid gold; }
@@ -58,6 +62,7 @@
 <div class="welcome" id="welcomeBox">
   <h3>Halo <span id="w-nama"></span>!</h3>
   <p>WA: <span id="w-wa"></span></p>
+  <button class="btn-logout" onclick="logout()">LOGOUT</button> <!-- INI TOMBOL BARU -->
 </div>
 
 <div id="stats">Koin: <span id="coins">0</span></div>
@@ -160,16 +165,26 @@ async function login() {
   }
 
   // 3. SIMPAN DAN MASUK GAME
-  localStorage.kenpopNama = nama; 
+  localStorage.kenpopNama = nama;
   localStorage.kenpopWA = wa;
   document.getElementById('w-nama').innerText = nama;
   document.getElementById('w-wa').innerText = wa;
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('welcomeBox').style.display = 'block';
   alert('Login Berhasil! Selamat bermain');
-  
+
   btn.disabled = false; btn.innerText = 'MASUK GAME';
 }
+
+// FUNGSI LOGOUT BARU
+function logout(){
+  if(confirm('Yakin mau logout? \nData koin & power kamu tetap aman di HP ini')){
+    localStorage.removeItem('kenpopNama');
+    localStorage.removeItem('kenpopWA');
+    location.reload(); // refresh ke halaman login
+  }
+}
+
 let today = new Date().toISOString().split('T')[0];
 let lastLogin = localStorage.lastLogin || "";
 if(lastLogin!== today){
