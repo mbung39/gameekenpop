@@ -258,11 +258,6 @@ function showAd() {
   lastAdTime = Date.now(); localStorage[getKey('lastAdTime')] = lastAdTime;
 }
 
-document.getElementById('logo').onclick = (e) => {
-  let totalKlik = power + auto;
-  coins += totalKlik; showPlus('+'+totalKlik, e); save();
-}
-
 btnPower.onclick = () => {
   if(pAds >= 3 || power >= 50) return;
   if(Date.now() - pTimer < 15000) return;
