@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V26.2</title>
+<title>KenPOP Tap V26.4</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V26.2</h2>
+  <h2>👋 SELAMAT DATANG V26.4</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -101,12 +101,11 @@ window.onload = function() {
     document.getElementById('welcomeBox').style.display = 'block';
     document.getElementById('w-nama').innerText = localStorage.kenpopNama;
     document.getElementById('w-wa').innerText = currentWA;
-    loadData(); 
+    loadData();
   }
-  
-  // LOGO BISA DIKLIK WALAUPUN BELUM LOGIN
+
   document.getElementById('logo').onclick = (e) => {
-    if(!currentWA) return;
+    if(!currentWA) return alert('Login dulu bree');
     let totalKlik = power + auto;
     coins += totalKlik; showPlus('+'+totalKlik, e); save();
   }
@@ -126,7 +125,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V26.2"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V26.4"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -136,6 +135,7 @@ async function login() {
     localStorage[getKey('coins')] = 0; localStorage[getKey('power')] = 1; localStorage[getKey('auto')] = 0;
     localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0; localStorage[getKey('autoEnd')] = 0;
     localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0; localStorage[getKey('lastLogin')] = "";
+    localStorage[getKey('lastAdTime')] = Date.now(); // V26.4 SET AWAL
     localStorage[getKey('historyTukar')] = "[]";
   }
   historyTukar = JSON.parse(localStorage[getKey('historyTukar')] || "[]");
@@ -184,7 +184,6 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // FIX: EVENT KLIK DIPINDAH KE SINI SETELAH getElementById
   btnPower.onclick = () => {
     if(pAds >= 3 || power >= 50) return;
     if(Date.now() - pTimer < 15000) return;
@@ -200,11 +199,16 @@ function loadData(){
 }
 
 function showAd() {
+  let now = Date.now();
+  // V26.4 FIX ANTI SPAM: CEK DULU UDAH 5 MENIT BELUM
+  if(now - lastAdTime < 300000) return; // 300000 = 5 menit
+
   let s = document.createElement('script');
   s.dataset.zone = '11780928';
   s.src = 'https://al5sm.com/tag.min.js';
   document.body.appendChild(s);
-  lastAdTime = Date.now(); localStorage[getKey('lastAdTime')] = lastAdTime;
+  lastAdTime = now;
+  localStorage[getKey('lastAdTime')] = lastAdTime;
 }
 
 function cekValidasi(type){
@@ -275,7 +279,9 @@ function save(){
   if(!currentWA) return;
   let now = Date.now();
   if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; }
-  if(now - lastAdTime >= 300000){ showAd(); }
+
+  // V26.4 HAPUS AUTO IKLAN DARI SINI
+  // if(now - lastAdTime >= 300000){ showAd(); } <- HAPUS INI
 
   localStorage[getKey('coins')]=coins; localStorage[getKey('power')]=power; localStorage[getKey('auto')]=auto;
   localStorage[getKey('pAds')]=pAds; localStorage[getKey('aAds')]=aAds; localStorage[getKey('autoEnd')]=autoEnd;
