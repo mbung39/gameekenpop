@@ -6,16 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KenPOP Tap</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- KODE MONETAG POPUNDER ZONE 11780928 -->
 <script>(function(s){s.dataset.zone='11780928',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <style>
-  body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding: 10px; }
+  body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding: 10px; user-select: none; -webkit-tap-highlight-color: transparent; }
   #stats { display: flex; justify-content: space-around; font-size: 20px; font-weight: bold; margin-bottom: 10px;}
-  #btn { width: 250px; height: 250px; border: none; background: url('kenpop.png') no-repeat center; background-size: contain; cursor: pointer; transition: 0.1s; }
+  #btn { width: 250px; height: 250px; border: none; background: url('kenpop.png') no-repeat center; background-size: contain; cursor: pointer; transition: 0.1s; outline: none; }
   #btn:active { transform: scale(0.9); }
   .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 10px; margin-top: 15px; }
   .item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #3a3a5e; border-radius: 10px; margin: 5px 0; }
   .buy-btn { background: gold; color: black; border: none; padding: 5px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  .buy-btn:disabled { background: gray; }
   #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
 </style>
@@ -30,8 +30,8 @@
 
   <div class="shop">
     <h3>🛒 SHOP</h3>
-    <div class="item">Klik +1 <button class="buy-btn" onclick="buyUpgrade('power', 50)">50 Koin + Iklan</button></div>
-    <div class="item">Auto Click <button class="buy-btn" onclick="buyUpgrade('auto', 200)">200 Koin + Iklan</button></div>
+    <div class="item">Klik +1 <button class="buy-btn" id="btnPower" onclick="watchAdForPower()">Nonton Iklan 0/3</button></div>
+    <div class="item">Auto Click <button class="buy-btn" id="btnAuto" onclick="watchAdForAuto()">Nonton Iklan 0/5</button></div>
   </div>
 
   <div class="leaderboard">
@@ -45,25 +45,40 @@ let user = tg.initDataUnsafe.user || {id: 123};
 let coins = parseInt(localStorage.getItem('coins')) || 0;
 let power = parseInt(localStorage.getItem('power')) || 1;
 let auto = parseInt(localStorage.getItem('auto')) || 0;
+let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+let powerAdsWatched = parseInt(localStorage.getItem('powerAdsWatched')) || 0;
+let autoAdsWatched = parseInt(localStorage.getItem('autoAdsWatched')) || 0;
+let autoEndTime = parseInt(localStorage.getItem('autoEndTime')) || 0;
 
 function updateUI() {
   document.getElementById('coins').innerText = coins;
   document.getElementById('level').innerText = power;
+  document.getElementById('btnPower').innerText = `Nonton Iklan ${powerAdsWatched}/3`;
+  document.getElementById('btnAuto').innerText = `Nonton Iklan ${autoAdsWatched}/5`;
+  
+  if(powerAdsWatched >= 3) document.getElementById('btnPower').innerText = "✅ Aktif";
+  if(autoAdsWatched >= 5 && Date.now() < autoEndTime) document.getElementById('btnAuto').innerText = "⏰ Aktif 1 Jam";
+  
   localStorage.setItem('coins', coins);
   localStorage.setItem('power', power);
   localStorage.setItem('auto', auto);
-  // Kirim data ke bot biar kesave
+  localStorage.setItem('clickCount', clickCount);
+  localStorage.setItem('powerAdsWatched', powerAdsWatched);
+  localStorage.setItem('autoAdsWatched', autoAdsWatched);
+  localStorage.setItem('autoEndTime', autoEndTime);
   tg.sendData(JSON.stringify({coins, power, auto}));
 }
 
 // TAP
 document.getElementById('btn').onclick = (e) => {
   coins += power;
+  clickCount++;
   showFloat('+'+power, e);
   updateUI();
   tg.HapticFeedback.impactOccurred('light');
-  // Munculin iklan tiap 10 klik biar cepet cuan
-  if(coins % 50 === 0) showZONEID();
+  
+  // Iklan tiap 50 klik
+  if(clickCount % 50 === 0) showZONEID();
 }
 
 // FLOATING TEXT
@@ -84,21 +99,52 @@ function showZONEID() {
   }
 }
 
-// BELI UPGRADE + IKLAN
-function buyUpgrade(type, price) {
-  if(coins < price) return alert('Koin kurang bree!');
-  
-  // Potong koin dulu
-  coins -= price;
-  if(type == 'power') power += 1;
-  if(type == 'auto') auto += 1;
-  
-  updateUI();
-  alert('Upgrade Berhasil!');
-  
-  // Abis itu munculin iklan
+// NONTON IKLAN BUAT POWER
+function watchAdForPower() {
+  if(powerAdsWatched >= 3) return;
   showZONEID();
+  powerAdsWatched++;
+  if(powerAdsWatched >= 3) {
+    power += 1;
+    alert('Klik +1 Aktif Permanen!');
+  }
+  updateUI();
 }
+
+// NONTON IKLAN BUAT AUTO
+function watchAdForAuto() {
+  if(autoAdsWatched >= 5) return;
+  showZONEID();
+  autoAdsWatched++;
+  if(autoAdsWatched >= 5) {
+    auto = power; // speed = power kamu
+    autoEndTime = Date.now() + 3600000; // 1 jam
+    alert('Auto Click Aktif 1 Jam!');
+  }
+  updateUI();
+}
+
+// AUTO CLICK
+setInterval(()=>{
+  if(auto > 0 && Date.now() < autoEndTime) { 
+    coins += auto; 
+    updateUI(); 
+  }
+  if(Date.now() > autoEndTime && auto > 0){
+    auto = 0;
+    autoAdsWatched = 0; // reset biar bisa nonton lagi
+    alert('Auto Click Habis. Nonton 5 iklan lagi!');
+    updateUI();
+  }
+}, 1000);
+
+// LEADERBOARD
+function loadLB() {
+  document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
+}
+loadLB();
+updateUI();
+tg.expand();
 </script>
 </body>
 </html>
