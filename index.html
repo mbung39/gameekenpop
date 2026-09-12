@@ -27,11 +27,11 @@
   }
 
   /* FORM DAFTAR BARU */
- .daftar-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
- .daftar-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
- .btn-daftar { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
- .struk { display:none; background:#334155; padding:20px; border-radius:10px; margin-top:20px; border:1px dashed #00ff88; }
- .id-besar { font-size:24px; font-weight:bold; color:#00ff88; letter-spacing:2px; }
+.daftar-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
+.daftar-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
+.btn-daftar { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
+.struk { display:none; background:#334155; padding:20px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
+.id-besar { font-size:24px; font-weight:bold; color:#00ff88; letter-spacing:2px; }
 </style>
 </head>
 <body>
@@ -55,7 +55,6 @@
   <p class="id-besar" id="s-id"></p>
   <p style="font-size:12px; color:#aaa;">Simpan ID ini buat Login Game</p>
 </div>
-
 
 <div class="shop">
   <h2>🛒 SHOP</h2>
@@ -129,6 +128,17 @@ function generateID() {
   return 'KP' + Date.now().toString().slice(-8) + Math.floor(Math.random()*90+10);
 }
 
+// CEK APAKAH UDAH PERNAH DAFTAR SAAT BUKA
+window.onload = function() {
+  if(localStorage.kenpopID) {
+    document.getElementById('form-daftar').style.display = 'none';
+    document.getElementById('struk').style.display = 'block';
+    document.getElementById('s-id').innerText = localStorage.kenpopID;
+    document.getElementById('s-nama').innerText = localStorage.kenpopNama;
+    document.getElementById('s-wa').innerText = localStorage.kenpopWA;
+  }
+}
+
 async function daftar() {
   const nama = document.getElementById('nama').value;
   const wa = document.getElementById('wa').value;
@@ -150,13 +160,17 @@ async function daftar() {
       body: JSON.stringify(data)
     });
     
+    // SIMPAN KE LOCALSTORAGE BIAR GA MUNCUL LAGI
+    localStorage.kenpopID = id;
+    localStorage.kenpopNama = nama;
+    localStorage.kenpopWA = wa;
+    
     // TAMPILIN STRUK
     document.getElementById('s-nama').innerText = nama;
     document.getElementById('s-wa').innerText = wa;
     document.getElementById('s-id').innerText = id;
-    document.getElementById('form-daftar').style.display = 'none';
+    document.getElementById('form-daftar').style.display = 'none'; // HILANG
     document.getElementById('struk').style.display = 'block';
-    localStorage.kenpopID = id; // SIMPAN ID
 
   } catch (e) {
     alert('Gagal daftar. Cek koneksi.');
@@ -164,7 +178,6 @@ async function daftar() {
     btn.innerText = 'GENERATE ID';
   }
 }
-
 
 btnPower.onclick = () => {
   if(pAds >= 3 || power >= 50) return;
