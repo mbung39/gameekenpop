@@ -10,26 +10,36 @@
 <script type='text/javascript' src='//pl31204126.profitabledisplayformat.com/12/34/56/123456.js'></script>
 
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { 
+    margin: 0; padding: 0; box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; /* FIX BIRU KETIKA DI KLIK */
+    -webkit-user-select: none;
+    user-select: none;
+  }
   body { 
     background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; 
-    height: 100vh; display: flex; flex-direction: column; justify-content: space-between;
+    height: 100vh; display: flex; flex-direction: column; justify-content: space-around; /* space-around biar pas */
     overflow: hidden; /* Biar gak scroll */
     padding: 5px;
   }
-  #stats { display: flex; justify-content: space-around; font-size: 18px; font-weight: bold; padding: 8px 0;}
+  #stats { 
+    display: flex; justify-content: space-around; 
+    font-size: 26px; /* BIKIN GEDE KOIN */
+    font-weight: 900; padding: 5px 0;
+  }
   #btn { 
-    width: 200px; height: 200px; border: none; background: url('kenpop.png') no-repeat center; 
+    width: 170px; height: 170px; /* DIKECILIN DIKIT BIAR MUAT */
+    border: none; background: url('kenpop.png') no-repeat center; 
     background-size: contain; cursor: pointer; transition: 0.1s; outline: none; margin: 0 auto;
   }
   #btn:active { transform: scale(0.9); }
-  .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 8px; margin: 5px 10px; }
-  .item { display: flex; justify-content: space-between; align-items: center; padding: 6px; background: #3a3a5e; border-radius: 10px; margin: 4px 0; font-size: 14px; }
-  .buy-btn { background: gold; color: black; border: none; padding: 5px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 8px; margin: 0 10px; }
+  .item { display: flex; justify-content: space-between; align-items: center; padding: 6px; background: #3a3a5e; border-radius: 10px; margin: 4px 0; font-size: 15px; font-weight: bold; }
+  .buy-btn { background: gold; color: black; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
   .buy-btn:disabled { background: gray; }
-  #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; pointer-events: none; }
+  #float { position: absolute; color: gold; font-weight: bold; font-size: 24px; animation: float 1s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
-  #ad-banner { width: 300px; height: 250px; margin: 5px auto; }
+  #ad-banner { width: 300px; height: 250px; margin: 0 auto; }
 </style>
 </head>
 <body>
@@ -69,21 +79,18 @@ let autoEndTime = parseInt(localStorage.getItem('autoEndTime')) || 0;
 let lastAdTime = parseInt(localStorage.getItem('lastAdTime')) || 0;
 let autoInterval;
 
-// FUNGSI IKLAN ADSTERRA - YANG BENER
-function showAdsterraAd(callback) {
-  if (typeof show_31204127 === 'function') {
-    show_31204127().then(() => { if(callback) callback(); });
-  } else {
-    alert('Iklan loading... Koin tetap masuk');
-    setTimeout(() => { if(callback) callback(); }, 2000); // fallback
-  }
+// FUNGSI IKLAN ADSTERRA - VERSI FIX. GAK LOADING LAGI
+function triggerAd() {
+  // Social bar auto. Kita gak usah panggil apa2
+  // Popunder kita trigger manual
+  if (typeof _pop === 'function') { _pop(); }
   lastAdTime = Date.now();
   localStorage.setItem('lastAdTime', lastAdTime);
 }
 
 function updateUI() {
-  document.getElementById('coins').innerText = coins;
-  document.getElementById('level').innerText = Math.floor(coins/100) + 1; // FIX LEVEL
+  document.getElementById('coins').innerText = coins.toLocaleString('id'); // Biar ada titik 1.000
+  document.getElementById('level').innerText = Math.floor(coins/100) + 1;
   document.getElementById('btnPower').innerText = `Nonton Iklan ${powerAdsWatched}/3`;
   document.getElementById('btnAuto').innerText = `Nonton Iklan ${autoAdsWatched}/5`;
   
@@ -124,32 +131,30 @@ function showFloat(text, e) {
 atOptions = { 'key' : '31204127', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
 document.write('<scr' + 'ipt type="text/javascript" src="//www.profitabledisplayformat.com/31204127/invoke.js"></scr' + 'ipt>');
 
-// NONTON IKLAN BUAT POWER
+// NONTON IKLAN BUAT POWER - LANGSUNG KASIH REWARD
 function watchAdForPower() {
   if(powerAdsWatched >= 3) return alert('Maks 3x sehari!');
-  showAdsterraAd(() => {
-    powerAdsWatched++;
-    if(powerAdsWatched >= 3) {
-      power += 1;
-      alert('Klik +1 Aktif Permanen!');
-    }
-    updateUI();
-  });
+  triggerAd(); // trigger iklan
+  powerAdsWatched++;
+  if(powerAdsWatched >= 3) {
+    power += 1;
+    alert('Klik +1 Aktif Permanen!');
+  }
+  updateUI();
 }
 
-// NONTON IKLAN BUAT AUTO
+// NONTON IKLAN BUAT AUTO - LANGSUNG KASIH REWARD
 function watchAdForAuto() {
   if(autoAdsWatched >= 5) return alert('Maks 5x sehari!');
-  showAdsterraAd(() => {
-    autoAdsWatched++;
-    if(autoAdsWatched >= 5) {
-      auto = power; 
-      autoEndTime = Date.now() + 3600000; 
-      startAuto();
-      alert('Auto Click Aktif 1 Jam!');
-    }
-    updateUI();
-  });
+  triggerAd(); // trigger iklan
+  autoAdsWatched++;
+  if(autoAdsWatched >= 5) {
+    auto = power; 
+    autoEndTime = Date.now() + 3600000; 
+    startAuto();
+    alert('Auto Click Aktif 1 Jam!');
+  }
+  updateUI();
 }
 
 // AUTO CLICK
@@ -173,7 +178,7 @@ function startAuto() {
 setInterval(()=>{
   let now = Date.now();
   if(now - lastAdTime >= 300000){
-    showAdsterraAd(); 
+    triggerAd(); 
   }
 }, 60000);
 
@@ -192,7 +197,7 @@ function resetGame() {
 
 // LEADERBOARD
 function loadLB() {
-  document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
+  document.getElementById('lb').innerHTML = `1. Kamu - ${coins.toLocaleString('id')} koin<br>2. Player2 - 1.200 koin<br>3. Player3 - 800 koin`;
 }
 
 loadLB();
