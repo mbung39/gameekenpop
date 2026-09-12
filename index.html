@@ -58,19 +58,19 @@ function showAd() {
 }
 
 document.getElementById('logo').onclick = (e) => { 
-  coins += power + auto; // KLIK LOGO GAK ADA IKLAN
+  coins += power + auto;
   showPlus('+'+(power+auto), e); 
   save(); 
 }
 
 btnPower.onclick = () => { 
   if(pAds >= 3) return; 
-  showAd(); // IKLAN MUNCUL DISINI
+  showAd();
   validasi('power'); 
 }
 btnAuto.onclick = () => { 
   if(aAds >= 6) return; 
-  showAd(); // IKLAN MUNCUL DISINI
+  showAd();
   validasi('auto'); 
 }
 
@@ -92,6 +92,14 @@ function validasi(type){
   }},1000);
 }
 
+function formatTime(ms) {
+  let totalSec = Math.floor(ms / 1000);
+  let hours = Math.floor(totalSec / 3600);
+  let minutes = Math.floor((totalSec % 3600) / 60);
+  let seconds = totalSec % 60;
+  return `${hours}j ${minutes}m ${seconds}d`;
+}
+
 function showPlus(txt,e){ 
   let d=document.createElement('div'); 
   d.id='float'; 
@@ -103,23 +111,42 @@ function showPlus(txt,e){
 }
 
 function save(){ 
-  if(Date.now()>autoEnd && auto>0){ auto=0; aAds=0; } 
+  let now = Date.now();
+  if(now > autoEnd && auto > 0){ 
+    auto = 0; 
+    aAds = 0; 
+  } 
+  
   localStorage.coins=coins; 
   localStorage.power=power; 
   localStorage.auto=auto; 
   localStorage.pAds=pAds; 
   localStorage.aAds=aAds; 
   localStorage.autoEnd=autoEnd; 
+  
   coinsTxt.innerText=coins.toLocaleString('id'); 
   levelTxt.innerText=Math.floor(coins/100)+1; 
   btnPower.innerText = pAds>=3 ? "✅ Aktif" : `Validasi ${pAds}/3`; 
-  btnAuto.innerText = Date.now()<autoEnd ? "⏰ Aktif" : `Validasi ${aAds}/6`; 
+  
+  // INI BAGIAN TIMER MUNDUR
+  if(now < autoEnd && auto > 0){
+    let sisa = autoEnd - now;
+    btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
+  } else {
+    btnAuto.innerText = `Validasi ${aAds}/6`;
+  }
 }
 
 function reset(){ if(confirm('Reset semua progress?')){ localStorage.clear(); location.reload(); } }
 function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
 
-setInterval(()=>{ if(auto > 0 && Date.now() < autoEnd){ coins += auto; } save(); },1000);
+setInterval(()=>{ 
+  if(auto > 0 && Date.now() < autoEnd){ 
+    coins += auto; 
+  } 
+  save(); 
+},1000);
+
 save();
 </script>
 </body>
