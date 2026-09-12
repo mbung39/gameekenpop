@@ -7,22 +7,13 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
     * { 
-    -webkit-tap-highlight-color: rgba(0,0,0,0); /* HILANGIN BIRU ANDROID */
-    -webkit-touch-callout: none; /* HILANGIN BIRU IPHONE */
+    -webkit-tap-highlight-color: rgba(0,0,0,0); 
+    -webkit-touch-callout: none; 
     -webkit-user-select: none; 
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     outline: none;
   }
-  button, #logo {
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-  }
-  
-  body { 
-    background: #0f172a; color: white; text-align: center; 
-    font-family: 'Poppins', sans-serif; padding: 20px; margin: 0;
-  }
+  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; }
   #stats { font-size: 32px; font-weight: bold; margin-bottom: 20px; }
   #logo { 
     width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; 
@@ -109,7 +100,12 @@ function nontonIklan(type){
   let btn = type==='power' ? btnPower : btnAuto;
   let timer = 15;
 
-  window.open('https://www.profitabledisplayformat.com/31204126/invoke.js','_blank'); // LINK IKLAN KAMU
+  // FIX 1: BUKA IKLAN PAKE <a> BIAR GAK KE-BLOKIR GOOGLE
+  let link = document.createElement('a');
+  link.href = 'https://www.profitabledisplayformat.com/31204126/invoke.js';
+  link.target = '_blank';
+  link.click();
+  
   btn.disabled = true;
 
   let x = setInterval(()=>{
@@ -117,7 +113,9 @@ function nontonIklan(type){
     timer--;
     if(timer<0){
       clearInterval(x);
-      watching = false;
+      watching = false; // FIX 2: PASTIIN WATCHING KE-RESET
+      btn.disabled = false; // BUKA LAGI TOMBOLNYA
+      
       if(type==='power') pAds++;
       if(type==='auto') aAds++;
       
@@ -139,7 +137,7 @@ function showPlus(txt,e){
 }
 
 function save(){
-  if(Date.now()>autoEnd && auto>0){ auto=0; aAds=0; } // reset auto kalo abis
+  if(Date.now()>autoEnd && auto>0){ auto=0; aAds=0; }
   
   localStorage.coins=coins; 
   localStorage.power=power; 
