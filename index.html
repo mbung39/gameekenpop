@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V22.5</title>
+<title>KenPOP Tap V22.6</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V22.5</h2>
+  <h2>👋 SELAMAT DATANG V22.6</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -85,7 +85,7 @@
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
-const ADSTERRA_VALIDASI = "https://pl31315068.profitableratecpmnetwork.com/32/31/9b/32319b7e5c5aa6b36baf37c9b49b6460.js";
+const ADSTERRA_KEY = "32319b7e5c5aa6b36baf37c9b49b6460"; // KEY LU TANPA.js
 
 let currentWA = "";
 function getKey(key){ return key + '_' + currentWA; }
@@ -94,17 +94,16 @@ let historyTukar = [];
 let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 
-// FIX: COOLDOWN BERATANGGA
 function getCooldownPower(index){
-  if(index === 0) return 15000; // 0/3 = 15 detik
-  if(index === 1) return 20000; // 1/3 = 20 detik
-  return 30000; // 2/3 = 30 detik
+  if(index === 0) return 15000;
+  if(index === 1) return 20000;
+  return 30000;
 }
 function getCooldownAuto(index){
-  if(index === 0) return 15000; // 0/6 = 15 detik
-  if(index === 1) return 20000; // 1/6 = 20 detik
-  if(index === 2) return 30000; // 2/6 = 30 detik
-  return 15000; // sisanya 15 detik biar cepet
+  if(index === 0) return 15000;
+  if(index === 1) return 20000;
+  if(index === 2) return 30000;
+  return 15000;
 }
 
 window.onload = function() {
@@ -139,7 +138,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V22.5"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V22.6"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -196,12 +195,11 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // FIX: 1 KLIK = 1 IKLAN + COOLDOWN BERATANGGA
   btnPower.onclick = () => {
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
-    showAd();
+    showAd(); // PANGGIL IKLAN DULU
     pAds++;
     pTimer = Date.now();
     if(pAds >= 3){
@@ -227,12 +225,18 @@ function loadData(){
   }
 
   save();
+  setInterval(save, 1000); // FIX: TIMER MUNDUR UPDATE TIAP 1 DETIK
 }
 
 function showAd() {
-  let s = document.createElement('script');
-  s.src = ADSTERRA_VALIDASI;
-  document.body.appendChild(s);
+  // FIX: PAKE IFRAME BIAR ADSTERRA MAU MUNCUL
+  let iframe = document.createElement('iframe');
+  iframe.src = `https://pl31315068.profitableratecpmnetwork.com/${ADSTERRA_KEY}/invoke.js`;
+  iframe.style.width = '0px';
+  iframe.style.height = '0px';
+  iframe.style.border = 'none';
+  document.body.appendChild(iframe);
+  setTimeout(()=>iframe.remove(), 5000); // Hapus setelah 5 detik
 }
 
 function cekValidasi(type){
@@ -241,12 +245,13 @@ function cekValidasi(type){
   let ads = type==='power'? pAds : aAds;
   let cooldown = type==='power'? getCooldownPower(ads) : getCooldownAuto(ads);
 
-  if(Date.now() - timer < cooldown && timer > 0){
+  if(timer > 0 && Date.now() - timer < cooldown){
     let sisa = Math.ceil((cooldown - (Date.now() - timer))/1000);
-    btn.disabled = true; btn.innerText = `Tunggu ${sisa}s...`; return false;
+    btn.disabled = true; btn.innerText = `Tunggu ${sisa}s...`;
   } else {
     btn.disabled = false;
-    return true;
+    if(type==='power') btn.innerText = `Validasi ${ads}/3`;
+    if(type==='auto') btn.innerText = `Validasi ${ads}/6`;
   }
 }
 
@@ -309,21 +314,13 @@ function save(){
   powerNowTxt.innerText = power;
   cekValidasi('power');
   if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
-  else { btnPower.innerText = `Validasi ${pAds}/3`; }
 
   cekValidasi('auto');
   if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
     btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
-  } else {
-    btnAuto.innerText = `Validasi ${aAds}/6`;
   }
 }
-
-setInterval(()=>{
-  if(auto > 0 && Date.now() < autoEnd){ coins += power + auto; }
-  save();
-},1000);
 </script>
 </body>
 </html>
