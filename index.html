@@ -2,20 +2,42 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>KenPOP Tap</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
-  #stats { font-size: 30px; font-weight: bold; margin-bottom: 20px; }
-  #logo { width: 200px; height: 200px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; cursor: pointer; }
-  #logo:active { transform: scale(0.9); }
+    * { 
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* HILANGIN BIRU ANDROID */
+    -webkit-touch-callout: none; /* HILANGIN BIRU IPHONE */
+    -webkit-user-select: none; 
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline: none;
+  }
+  button, #logo {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+  }
+  
+  body { 
+    background: #0f172a; color: white; text-align: center; 
+    font-family: 'Poppins', sans-serif; padding: 20px; margin: 0;
+  }
+  #stats { font-size: 32px; font-weight: bold; margin-bottom: 20px; }
+  #logo { 
+    width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; 
+    background-size: contain; border: none; margin: 20px auto; cursor: pointer; display: block;
+    transition: transform 0.1s;
+  }
+  #logo:active { transform: scale(0.88); }
   .shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
-  .item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
-  button { background: gold; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-  button:disabled { background: gray; }
-  .reset { background: red; color: white; width: 100%; margin-top: 10px; }
-  .tukar { background: green; color: white; width: 100%; margin-top: 10px; }
+  .item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; font-size: 16px; }
+  button { background: gold; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; }
+  button:disabled { background: gray; color: #ccc; }
+  .reset { background: #ef4444; color: white; width: 100%; margin-top: 10px; }
+  .tukar { background: #22c55e; color: white; width: 100%; margin-top: 10px; }
+  #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; text-shadow: 0 0 5px #000; }
+  @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
 </style>
 </head>
 <body>
@@ -50,10 +72,16 @@ tg.expand();
 let coins = +localStorage.coins || 0;
 let power = +localStorage.power || 1;
 let auto = +localStorage.auto || 0;
-let pAds = +localStorage.pAds || 0; // power ads
-let aAds = +localStorage.aAds || 0; // auto ads
+let pAds = +localStorage.pAds || 0;
+let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
 let watching = false;
+
+let coinsTxt = document.getElementById('coins');
+let levelTxt = document.getElementById('level');
+let btnPower = document.getElementById('btnPower');
+let btnAuto = document.getElementById('btnAuto');
+let lb = document.getElementById('lb');
 
 // KLIK LOGO
 document.getElementById('logo').onclick = (e) => {
@@ -63,15 +91,15 @@ document.getElementById('logo').onclick = (e) => {
 }
 
 // NONTON IKLAN POWER 3X
-document.getElementById('btnPower').onclick = () => {
-  if(pAds >= 3) return;
+btnPower.onclick = () => {
+  if(pAds >= 3) return alert('Klik +1 sudah aktif!');
   if(watching) return alert('Tunggu iklan selesai dulu!');
   nontonIklan('power');
 }
 
 // NONTON IKLAN AUTO 6X
-document.getElementById('btnAuto').onclick = () => {
-  if(aAds >= 6) return;
+btnAuto.onclick = () => {
+  if(aAds >= 6) return alert('Auto Click sudah aktif!');
   if(watching) return alert('Tunggu iklan selesai dulu!');
   nontonIklan('auto');
 }
@@ -79,11 +107,9 @@ document.getElementById('btnAuto').onclick = () => {
 function nontonIklan(type){
   watching = true;
   let btn = type==='power' ? btnPower : btnAuto;
-  let count = type==='power' ? pAds : aAds;
-  let max = type==='power' ? 3 : 6;
-  let timer = 15; // 15 detik aja biar cepet
+  let timer = 15;
 
-  window.open('https://www.profitabledisplayformat.com/31204126/invoke.js','_blank'); // BUKA IKLAN
+  window.open('https://www.profitabledisplayformat.com/31204126/invoke.js','_blank'); // LINK IKLAN KAMU
   btn.disabled = true;
 
   let x = setInterval(()=>{
@@ -92,12 +118,11 @@ function nontonIklan(type){
     if(timer<0){
       clearInterval(x);
       watching = false;
-      count++;
-      if(type==='power') pAds = count;
-      if(type==='auto') aAds = count;
+      if(type==='power') pAds++;
+      if(type==='auto') aAds++;
       
-      if(pAds>=3){ power++; pAds=0; alert('Klik +1 Aktif!'); }
-      if(aAds>=6){ auto=power; autoEnd=Date.now()+3600000; alert('Auto Click Aktif 1 Jam!'); }
+      if(pAds>=3){ power++; pAds=0; alert('Klik +1 Aktif Permanen!'); }
+      if(aAds>=6){ auto=power; autoEnd=Date.now()+3600000; aAds=0; alert('Auto Click Aktif 1 Jam!'); }
       save();
     }
   },1000);
@@ -105,28 +130,37 @@ function nontonIklan(type){
 
 function showPlus(txt,e){
   let d=document.createElement('div');
-  d.innerText=txt; d.style="position:absolute;color:gold;font-size:24px;font-weight:bold;";
-  d.style.left=e.clientX+'px'; d.style.top=e.clientY+'px';
+  d.id = 'float';
+  d.innerText=txt;
+  d.style.left=e.clientX-20+'px'; 
+  d.style.top=e.clientY-20+'px';
   document.body.appendChild(d);
   setTimeout(()=>d.remove(),800);
 }
 
 function save(){
-  localStorage.coins=coins; localStorage.power=power; localStorage.auto=auto;
-  localStorage.pAds=pAds; localStorage.aAds=aAds; localStorage.autoEnd=autoEnd;
-  coinsTxt.innerText=coins; levelTxt.innerText=Math.floor(coins/100)+1;
+  if(Date.now()>autoEnd && auto>0){ auto=0; aAds=0; } // reset auto kalo abis
+  
+  localStorage.coins=coins; 
+  localStorage.power=power; 
+  localStorage.auto=auto;
+  localStorage.pAds=pAds; 
+  localStorage.aAds=aAds; 
+  localStorage.autoEnd=autoEnd;
+  
+  coinsTxt.innerText=coins.toLocaleString('id'); 
+  levelTxt.innerText=Math.floor(coins/100)+1;
   
   btnPower.innerText = pAds>=3 ? "✅ Aktif" : `Nonton Iklan ${pAds}/3`;
   btnAuto.innerText = Date.now()<autoEnd ? "⏰ Aktif 1 Jam" : `Nonton Iklan ${aAds}/6`;
   
-  if(Date.now()>autoEnd && auto>0){ auto=0; aAds=0; }
-  
-  lb.innerText = `1. Kamu - ${coins} koin`;
+  lb.innerText = `1. Kamu - ${coins.toLocaleString('id')} koin`;
 }
 
 function reset(){
-  if(confirm('Reset semua?')){
-    localStorage.clear(); location.reload();
+  if(confirm('Reset semua data?')){
+    localStorage.clear(); 
+    location.reload();
   }
 }
 
@@ -140,13 +174,14 @@ function tukar(){
   }
 }
 
-let coinsTxt = document.getElementById('coins');
-let levelTxt = document.getElementById('level');
-let btnPower = document.getElementById('btnPower');
-let btnAuto = document.getElementById('btnAuto');
-let lb = document.getElementById('lb');
+// AUTO CLICK JALAN TIAP DETIK
+setInterval(()=>{
+  if(auto > 0 && Date.now() < autoEnd){
+    coins += auto;
+  }
+  save();
+},1000);
 
-setInterval(save,1000); // update tiap detik buat auto click
 save();
 </script>
 </body>
