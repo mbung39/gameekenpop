@@ -9,15 +9,15 @@
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
   body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; }
-  #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
+  #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; } /* UDAH DI GEDEIN LAGI */
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
- .shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
- .item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
- .item span small { font-size: 12px; color: #94a3b8; }
+.shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
+.item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
+.item span small { font-size: 12px; color: #94a3b8; }
   button { background: gold; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
   button:disabled { background: gray; cursor: not-allowed; }
- .tukar { background: #22c55e; color: white; width: 100%; margin-top: 10px; }
+.tukar { background: #22c55e; color: white; width: 100%; margin-top: 10px; }
   #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
 </style>
@@ -44,23 +44,25 @@
 let tg = window.Telegram.WebApp; tg.expand();
 
 // CEK RESET HARIAN JAM 00:00
-let today = new Date().toISOString().split('T')[0]; // 2026-09-12
+let today = new Date().toISOString().split('T')[0];
 let lastLogin = localStorage.lastLogin || "";
 
 if(lastLogin!== today){
-  localStorage.power = 1; // RESET KE +1
+  localStorage.power = 1;
   localStorage.pAds = 0;
   localStorage.aAds = 0;
   localStorage.lastLogin = today;
+  localStorage.lastAdTime = Date.now();
   alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
 }
 
 let coins = +localStorage.coins || 0;
-let power = +localStorage.power || 1; // INI TOTAL KLIK
+let power = +localStorage.power || 1;
 let auto = +localStorage.auto || 0;
 let pAds = +localStorage.pAds || 0;
 let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
+let lastAdTime = +localStorage.lastAdTime || Date.now();
 
 let coinsTxt = document.getElementById('coins');
 let powerNowTxt = document.getElementById('powerNow');
@@ -73,6 +75,8 @@ function showAd() {
   s.dataset.zone = '11780928';
   s.src = 'https://al5sm.com/tag.min.js';
   document.body.appendChild(s);
+  lastAdTime = Date.now();
+  localStorage.lastAdTime = lastAdTime;
 }
 
 document.getElementById('logo').onclick = (e) => {
@@ -83,7 +87,7 @@ document.getElementById('logo').onclick = (e) => {
 }
 
 btnPower.onclick = () => {
-  if(pAds >= 3 || power >= 50) return; // MAX 50
+  if(pAds >= 3 || power >= 50) return;
   showAd();
   validasi('power');
 }
@@ -145,6 +149,11 @@ function save(){
     aAds = 0;
   }
 
+  // CEK IKLAN OTOMATIS TIAP 5 MENIT = 300000ms
+  if(now - lastAdTime >= 300000){
+    showAd();
+  }
+
   localStorage.coins=coins;
   localStorage.power=power;
   localStorage.auto=auto;
@@ -153,7 +162,7 @@ function save(){
   localStorage.autoEnd=autoEnd;
 
   coinsTxt.innerText=coins.toLocaleString('id');
-  powerNowTxt.innerText = power; // TAMPILIN TOTAL KLIK
+  powerNowTxt.innerText = power;
 
   if(power >= 50){
     btnPower.innerText = "✅ MAX 50";
@@ -174,7 +183,7 @@ function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi
 
 setInterval(()=>{
   if(auto > 0 && Date.now() < autoEnd){
-    coins += power + auto; // AUTO JUGA IKUT POWER TERBARU
+    coins += power + auto;
   }
   save();
 },1000);
