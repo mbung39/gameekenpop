@@ -26,12 +26,12 @@
     border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0;
   }
 
-/* TAMBAHAN CSS DAFTAR */
-.daftar-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
-.daftar-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
-.btn-daftar { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
-.struk { display:none; background:#334155; padding:20px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
-.id-besar { font-size:24px; font-weight:bold; color:#00ff88; letter-spacing:2px; }
+  /* FORM DAFTAR BARU */
+ .daftar-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
+ .daftar-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
+ .btn-daftar { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
+ .struk { display:none; background:#334155; padding:20px; border-radius:10px; margin-top:20px; border:1px dashed #00ff88; }
+ .id-besar { font-size:24px; font-weight:bold; color:#00ff88; letter-spacing:2px; }
 </style>
 </head>
 <body>
@@ -39,7 +39,7 @@
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
 
-<!-- TAMBAHAN FORM DAFTAR -->
+<!-- FORM DAFTAR BARU -->
 <div class="daftar-box" id="form-daftar">
   <h2>📝 DAFTAR KENPOP ID</h2>
   <input type="text" id="nama" placeholder="Nama Lengkap" required>
@@ -83,7 +83,7 @@
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 
-// LINK BACKEND KAMU
+// LINK BACKEND KAMU BREE
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
 // CEK RESET HARIAN JAM 00:00
@@ -129,17 +129,6 @@ function generateID() {
   return 'KP' + Date.now().toString().slice(-8) + Math.floor(Math.random()*90+10);
 }
 
-// CEK APAKAH UDAH PERNAH DAFTAR SAAT BUKA
-window.onload = function() {
-  if(localStorage.kenpopID) {
-    document.getElementById('form-daftar').style.display = 'none';
-    document.getElementById('struk').style.display = 'block';
-    document.getElementById('s-id').innerText = localStorage.kenpopID;
-    document.getElementById('s-nama').innerText = localStorage.kenpopNama;
-    document.getElementById('s-wa').innerText = localStorage.kenpopWA;
-  }
-}
-
 async function daftar() {
   const nama = document.getElementById('nama').value;
   const wa = document.getElementById('wa').value;
@@ -161,15 +150,13 @@ async function daftar() {
       body: JSON.stringify(data)
     });
     
-    localStorage.kenpopID = id;
-    localStorage.kenpopNama = nama;
-    localStorage.kenpopWA = wa;
-    
+    // TAMPILIN STRUK
     document.getElementById('s-nama').innerText = nama;
     document.getElementById('s-wa').innerText = wa;
     document.getElementById('s-id').innerText = id;
     document.getElementById('form-daftar').style.display = 'none';
     document.getElementById('struk').style.display = 'block';
+    localStorage.kenpopID = id; // SIMPAN ID
 
   } catch (e) {
     alert('Gagal daftar. Cek koneksi.');
@@ -178,7 +165,7 @@ async function daftar() {
   }
 }
 
-// KODE GAME KAMU TETEP SAMA 100%
+
 btnPower.onclick = () => {
   if(pAds >= 3 || power >= 50) return;
   if(Date.now() - pTimer < 15000) return;
@@ -267,7 +254,13 @@ function save(){
   }
 }
 
-function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
+function tukar(){ 
+  if(coins >= 1000){ 
+    coins -= 1000; 
+    alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); 
+    save(); 
+  } else { alert('Koin kurang. Butuh 1000 koin'); } 
+}
 
 setInterval(()=>{
   if(auto > 0 && Date.now() < autoEnd){ coins += power + auto; }
