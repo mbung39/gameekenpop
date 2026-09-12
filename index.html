@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V26.6</title>
+<title>KenPOP Tap V26.2</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
-  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; position: relative; }
+  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; }
   #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
@@ -20,7 +20,7 @@
 .tukar-group { display:flex; gap:10px; margin-top:10px; }
 .tukar { background: #22c55e; color: white; width: 50%; }
 .tukar-history { background: #3b82f6; color: white; width: 50%; }
-  #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; z-index: 9999; }
+  #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
   #bannerBox { width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0; }
 .login-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V26.6</h2>
+  <h2>👋 SELAMAT DATANG V26.2</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -73,8 +73,10 @@
   </div>
 </div>
 
-<!-- V26.6 FIX: BANNER DIKOSONGKAN DULU -->
-<div id="bannerBox"></div>
+<div id="bannerBox">
+<script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
+<script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
+</div>
 
 <div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
@@ -88,7 +90,7 @@ let currentWA = "";
 function getKey(key){ return key + '_' + currentWA; }
 
 let historyTukar = [];
-let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
+let coins, power, auto, pAds, aAds, autoEnd, lastAdTime, pTimer, aTimer;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 
 window.onload = function() {
@@ -99,18 +101,14 @@ window.onload = function() {
     document.getElementById('welcomeBox').style.display = 'block';
     document.getElementById('w-nama').innerText = localStorage.kenpopNama;
     document.getElementById('w-wa').innerText = currentWA;
-    loadData();
+    loadData(); 
   }
-
-  // V26.6 FIX: SUPPORT TOUCH + MOUSE
-  let logo = document.getElementById('logo');
-  logo.onclick = logo.ontouchstart = (e) => {
-    e.preventDefault();
-    if(!currentWA) return alert('Login dulu bree');
+  
+  // LOGO BISA DIKLIK WALAUPUN BELUM LOGIN
+  document.getElementById('logo').onclick = (e) => {
+    if(!currentWA) return;
     let totalKlik = power + auto;
-    coins += totalKlik;
-    showPlus('+'+totalKlik, e); // KIRIM EVENT
-    save();
+    coins += totalKlik; showPlus('+'+totalKlik, e); save();
   }
 }
 
@@ -128,7 +126,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V26.6"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V26.2"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -166,7 +164,7 @@ function loadData(){
   let lastLogin = localStorage[getKey('lastLogin')] || "";
   if(lastLogin!== today){
     localStorage[getKey('power')] = 1; localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0;
-    localStorage[getKey('lastLogin')] = today;
+    localStorage[getKey('lastLogin')] = today; localStorage[getKey('lastAdTime')] = Date.now();
     localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0;
     if(lastLogin) alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
   }
@@ -177,6 +175,7 @@ function loadData(){
   pAds = +localStorage[getKey('pAds')] || 0;
   aAds = +localStorage[getKey('aAds')] || 0;
   autoEnd = +localStorage[getKey('autoEnd')] || 0;
+  lastAdTime = +localStorage[getKey('lastAdTime')] || Date.now();
   pTimer = +localStorage[getKey('pTimer')] || 0;
   aTimer = +localStorage[getKey('aTimer')] || 0;
 
@@ -185,30 +184,27 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
+  // FIX: EVENT KLIK DIPINDAH KE SINI SETELAH getElementById
   btnPower.onclick = () => {
     if(pAds >= 3 || power >= 50) return;
     if(Date.now() - pTimer < 15000) return;
-    loadBannerAd(); pAds++; pTimer = Date.now(); save(); // GANTI NAMA
+    showAd(); pAds++; pTimer = Date.now(); save();
   }
   btnAuto.onclick = () => {
     if(aAds >= 6) return;
     if(Date.now() - aTimer < 15000) return;
-    loadBannerAd(); aAds++; aTimer = Date.now(); save(); // GANTI NAMA
+    showAd(); aAds++; aTimer = Date.now(); save();
   }
 
   save();
 }
 
-// V26.6 FIX: IKLAN CUMA LOAD PAS VALIDASI
-function loadBannerAd() {
-  let box = document.getElementById('bannerBox');
-  box.innerHTML = ""; // KOSONGKAN DULU
-  let s1 = document.createElement('script');
-  s1.innerHTML = `atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };`;
-  let s2 = document.createElement('script');
-  s2.src = "//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js";
-  box.appendChild(s1);
-  box.appendChild(s2);
+function showAd() {
+  let s = document.createElement('script');
+  s.dataset.zone = '11780928';
+  s.src = 'https://al5sm.com/tag.min.js';
+  document.body.appendChild(s);
+  lastAdTime = Date.now(); localStorage[getKey('lastAdTime')] = lastAdTime;
 }
 
 function cekValidasi(type){
@@ -237,12 +233,9 @@ function formatTime(ms) {
   return `${hours}j ${minutes}m ${seconds}d`;
 }
 
-// V26.6 FIX: ANIMASI SUPPORT TOUCH
 function showPlus(txt,e){
-  let x = e.clientX || e.touches[0].clientX;
-  let y = e.clientY || e.touches[0].clientY;
   let d=document.createElement('div'); d.id='float'; d.innerText=txt;
-  d.style.left=x-20+'px'; d.style.top=y-20+'px';
+  d.style.left=e.clientX-20+'px'; d.style.top=e.clientY-20+'px';
   document.body.appendChild(d); setTimeout(()=>d.remove(),800);
 }
 
@@ -282,6 +275,7 @@ function save(){
   if(!currentWA) return;
   let now = Date.now();
   if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; }
+  if(now - lastAdTime >= 300000){ showAd(); }
 
   localStorage[getKey('coins')]=coins; localStorage[getKey('power')]=power; localStorage[getKey('auto')]=auto;
   localStorage[getKey('pAds')]=pAds; localStorage[getKey('aAds')]=aAds; localStorage[getKey('autoEnd')]=autoEnd;
