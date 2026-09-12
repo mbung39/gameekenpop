@@ -9,14 +9,13 @@
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
   body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; }
-  #stats { font-size: 32px; font-weight: bold; margin-bottom: 20px; }
+  #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; } /* DI GEDEIN DIKIT */
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
   .shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
   .item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
   button { background: gold; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
   button:disabled { background: gray; cursor: not-allowed; }
-  .reset { background: #ef4444; color: white; width: 100%; margin-top: 10px; }
   .tukar { background: #22c55e; color: white; width: 100%; margin-top: 10px; }
   #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
@@ -24,14 +23,14 @@
 </head>
 <body>
 
-<div id="stats">Koin: <span id="coins">0</span> | Level: <span id="level">1</span></div>
+<div id="stats">Koin: <span id="coins">0</span></div> <!-- LEVEL UDAH DIHAPUS -->
 <button id="logo"></button>
 
 <div class="shop">
   <h2>🛒 SHOP</h2>
   <div class="item"><span>Klik +1</span><button id="btnPower">Validasi 0/3</button></div>
   <div class="item"><span>Auto Click 1 Jam</span><button id="btnAuto">Validasi 0/6</button></div>
-  <button class="reset" onclick="reset()">🔄 RESET GAME</button>
+  <!-- TOMBOL RESET UDAH DIHAPUS -->
   <button class="tukar" onclick="tukar()">🍗 TUKAR MAKAN</button>
 </div>
 
@@ -45,7 +44,6 @@ let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
 
 let coinsTxt = document.getElementById('coins'); 
-let levelTxt = document.getElementById('level');
 let btnPower = document.getElementById('btnPower'); 
 let btnAuto = document.getElementById('btnAuto');
 
@@ -125,10 +123,9 @@ function save(){
   localStorage.autoEnd=autoEnd; 
   
   coinsTxt.innerText=coins.toLocaleString('id'); 
-  levelTxt.innerText=Math.floor(coins/100)+1; 
+  
   btnPower.innerText = pAds>=3 ? "✅ Aktif" : `Validasi ${pAds}/3`; 
   
-  // INI BAGIAN TIMER MUNDUR
   if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
     btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
@@ -137,7 +134,6 @@ function save(){
   }
 }
 
-function reset(){ if(confirm('Reset semua progress?')){ localStorage.clear(); location.reload(); } }
 function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
 
 setInterval(()=>{ 
