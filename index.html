@@ -9,42 +9,62 @@
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
   body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; }
-  #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; } /* DI GEDEIN DIKIT */
+  #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
-  .shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
-  .item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
+ .shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
+ .item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
+ .item span small { font-size: 12px; color: #94a3b8; }
   button { background: gold; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
   button:disabled { background: gray; cursor: not-allowed; }
-  .tukar { background: #22c55e; color: white; width: 100%; margin-top: 10px; }
+ .tukar { background: #22c55e; color: white; width: 100%; margin-top: 10px; }
   #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
 </style>
 </head>
 <body>
 
-<div id="stats">Koin: <span id="coins">0</span></div> <!-- LEVEL UDAH DIHAPUS -->
+<div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
 
 <div class="shop">
   <h2>🛒 SHOP</h2>
-  <div class="item"><span>Klik +1</span><button id="btnPower">Validasi 0/3</button></div>
-  <div class="item"><span>Auto Click 1 Jam</span><button id="btnAuto">Validasi 0/6</button></div>
-  <!-- TOMBOL RESET UDAH DIHAPUS -->
+  <div class="item">
+    <span>Klik +1<br><small>Total = +<span id="powerNow">1</span></small></span>
+    <button id="btnPower">Validasi 0/3</button>
+  </div>
+  <div class="item">
+    <span>Auto Click 1 Jam</span>
+    <button id="btnAuto">Validasi 0/6</button>
+  </div>
   <button class="tukar" onclick="tukar()">🍗 TUKAR MAKAN</button>
 </div>
 
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
-let coins = +localStorage.coins || 0; 
-let power = +localStorage.power || 1; 
+
+// CEK RESET HARIAN JAM 00:00
+let today = new Date().toISOString().split('T')[0]; // 2026-09-12
+let lastLogin = localStorage.lastLogin || "";
+
+if(lastLogin!== today){
+  localStorage.power = 1; // RESET KE +1
+  localStorage.pAds = 0;
+  localStorage.aAds = 0;
+  localStorage.lastLogin = today;
+  alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
+}
+
+let coins = +localStorage.coins || 0;
+let power = +localStorage.power || 1; // INI TOTAL KLIK
 let auto = +localStorage.auto || 0;
-let pAds = +localStorage.pAds || 0; 
-let aAds = +localStorage.aAds || 0; 
+let pAds = +localStorage.pAds || 0;
+let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
 
-let coinsTxt = document.getElementById('coins'); 
-let btnPower = document.getElementById('btnPower'); 
+let coinsTxt = document.getElementById('coins');
+let powerNowTxt = document.getElementById('powerNow');
+let btnPower = document.getElementById('btnPower');
 let btnAuto = document.getElementById('btnAuto');
 
 // FUNGSI BUAT TRIGGER IKLAN MONETAG
@@ -55,37 +75,47 @@ function showAd() {
   document.body.appendChild(s);
 }
 
-document.getElementById('logo').onclick = (e) => { 
-  coins += power + auto;
-  showPlus('+'+(power+auto), e); 
-  save(); 
+document.getElementById('logo').onclick = (e) => {
+  let totalKlik = power + auto;
+  coins += totalKlik;
+  showPlus('+'+totalKlik, e);
+  save();
 }
 
-btnPower.onclick = () => { 
-  if(pAds >= 3) return; 
+btnPower.onclick = () => {
+  if(pAds >= 3 || power >= 50) return; // MAX 50
   showAd();
-  validasi('power'); 
+  validasi('power');
 }
-btnAuto.onclick = () => { 
-  if(aAds >= 6) return; 
+btnAuto.onclick = () => {
+  if(aAds >= 6) return;
   showAd();
-  validasi('auto'); 
+  validasi('auto');
 }
 
-function validasi(type){ 
-  let btn = type==='power' ? btnPower : btnAuto; 
-  let timer = 15; 
+function validasi(type){
+  let btn = type==='power'? btnPower : btnAuto;
+  let timer = 15;
   btn.disabled = true;
-  let x = setInterval(()=>{ 
-    btn.innerText = `Tunggu ${timer}s...`; 
+  let x = setInterval(()=>{
+    btn.innerText = `Tunggu ${timer}s...`;
     timer--;
-    if(timer<0){ 
-      clearInterval(x); 
+    if(timer<0){
+      clearInterval(x);
       btn.disabled = false;
-      if(type==='power') pAds++; 
+      if(type==='power') pAds++;
       if(type==='auto') aAds++;
-      if(pAds>=3){ power++; pAds=0; alert('Klik +1 Aktif!'); }
-      if(aAds>=6){ auto=power; autoEnd=Date.now()+3600000; aAds=0; alert('Auto Aktif 1 Jam!'); }
+      if(pAds>=3 && power < 50){
+        power++;
+        pAds=0;
+        alert(`Klik +1 Naik! Sekarang Total = +${power}`);
+      }
+      if(aAds>=6){
+        auto=power;
+        autoEnd=Date.now()+3600000;
+        aAds=0;
+        alert('Auto Aktif 1 Jam!');
+      }
       save();
   }},1000);
 }
@@ -98,34 +128,40 @@ function formatTime(ms) {
   return `${hours}j ${minutes}m ${seconds}d`;
 }
 
-function showPlus(txt,e){ 
-  let d=document.createElement('div'); 
-  d.id='float'; 
-  d.innerText=txt; 
-  d.style.left=e.clientX-20+'px'; 
-  d.style.top=e.clientY-20+'px'; 
-  document.body.appendChild(d); 
-  setTimeout(()=>d.remove(),800); 
+function showPlus(txt,e){
+  let d=document.createElement('div');
+  d.id='float';
+  d.innerText=txt;
+  d.style.left=e.clientX-20+'px';
+  d.style.top=e.clientY-20+'px';
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),800);
 }
 
-function save(){ 
+function save(){
   let now = Date.now();
-  if(now > autoEnd && auto > 0){ 
-    auto = 0; 
-    aAds = 0; 
-  } 
-  
-  localStorage.coins=coins; 
-  localStorage.power=power; 
-  localStorage.auto=auto; 
-  localStorage.pAds=pAds; 
-  localStorage.aAds=aAds; 
-  localStorage.autoEnd=autoEnd; 
-  
-  coinsTxt.innerText=coins.toLocaleString('id'); 
-  
-  btnPower.innerText = pAds>=3 ? "✅ Aktif" : `Validasi ${pAds}/3`; 
-  
+  if(now > autoEnd && auto > 0){
+    auto = 0;
+    aAds = 0;
+  }
+
+  localStorage.coins=coins;
+  localStorage.power=power;
+  localStorage.auto=auto;
+  localStorage.pAds=pAds;
+  localStorage.aAds=aAds;
+  localStorage.autoEnd=autoEnd;
+
+  coinsTxt.innerText=coins.toLocaleString('id');
+  powerNowTxt.innerText = power; // TAMPILIN TOTAL KLIK
+
+  if(power >= 50){
+    btnPower.innerText = "✅ MAX 50";
+    btnPower.disabled = true;
+  } else {
+    btnPower.innerText = pAds>=3? "✅ Aktif" : `Validasi ${pAds}/3`;
+  }
+
   if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
     btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
@@ -136,11 +172,11 @@ function save(){
 
 function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
 
-setInterval(()=>{ 
-  if(auto > 0 && Date.now() < autoEnd){ 
-    coins += auto; 
-  } 
-  save(); 
+setInterval(()=>{
+  if(auto > 0 && Date.now() < autoEnd){
+    coins += power + auto; // AUTO JUGA IKUT POWER TERBARU
+  }
+  save();
 },1000);
 
 save();
