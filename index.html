@@ -152,4 +152,37 @@ setInterval(()=>{
     auto = 0;
     autoAdsWatched = 0; // reset biar bisa nonton lagi
     alert('Auto Click Habis. Nonton 5 iklan lagi!');
-    updateUI
+    updateUI();
+  }
+}, 1000);
+	
+// IKLAN OTOMATIS TIAP 5 MENIT
+setInterval(()=>{
+  let now = Date.now();
+  if(now - lastAdTime >= 300000){ // 300000ms = 5 menit
+    showAdsterraAd();  // UDAH GANTI KE ADSTERRA
+  }
+}, 60000); // cek tiap 1 menit
+
+	updateUI();
+  }
+}, 1000);
+
+// IKLAN OTOMATIS TIAP 5 MENIT
+setInterval(()=>{
+  let now = Date.now();
+  if(now - lastAdTime >= 300000){ // 300000ms = 5 menit
+    showZONEID();
+  }
+}, 60000); // cek tiap 1 menit
+
+// LEADERBOARD
+function loadLB() {
+  document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
+}
+loadLB();
+updateUI();
+tg.expand();
+</script>
+</body>
+</html>
