@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta name="monetag" content="7306028cdd72de3f6b36d3fa51e1a985">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KenPOP Tap</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>(function(s){s.dataset.zone='11780928',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+<!-- 1. ADSTERRA SOCIAL BAR - AUTO MUNCUL -->
+<script type='text/javascript' src='//pl31204126.profitabledisplayformat.com/12/34/56/123456.js'></script>
+
 <style>
   body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding: 10px; user-select: none; -webkit-tap-highlight-color: transparent; }
   #stats { display: flex; justify-content: space-around; font-size: 20px; font-weight: bold; margin-bottom: 10px;}
@@ -18,6 +20,9 @@
   .buy-btn:disabled { background: gray; }
   #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
+  
+  /* 2. ADSTERRA BANNER 300x250 */
+  #ad-banner { width: 300px; height: 250px; margin: 15px auto; }
 </style>
 </head>
 <body>
@@ -27,6 +32,9 @@
   </div>
 
   <button id="btn"></button>
+
+  <!-- TEMPAT BANNER 300x250 -->
+  <div id="ad-banner"></div>
 
   <div class="shop">
     <h3>🛒 SHOP</h3>
@@ -88,19 +96,31 @@ function showFloat(text, e) {
   setTimeout(()=>float.remove(), 1000);
 }
 
-// FUNGSI IKLAN MONETAG
-function showZONEID() {
-  if (typeof show_11780928 === 'function') {
-    show_11780928();
-    lastAdTime = Date.now();
-    localStorage.setItem('lastAdTime', lastAdTime);
+// 2. ADSTERRA BANNER 300x250 CODE
+atOptions = {
+	'key' : '31204127',
+	'format' : 'iframe',
+	'height' : 250,
+	'width' : 300,
+	'params' : {}
+};
+document.write('<scr' + 'ipt type="text/javascript" src="//www.profitabledisplayformat.com/31204127/invoke.js"></scr' + 'ipt>');
+
+// FUNGSI IKLAN ADSTERRA - GANTI MONETAG
+function showAdsterraAd() {
+  // Social Bar auto muncul sendiri
+  // Buat trigger banner pop, kita reload banner
+  if (typeof _pop === 'function') {
+    _pop();
   }
+  lastAdTime = Date.now();
+  localStorage.setItem('lastAdTime', lastAdTime);
 }
 
 // NONTON IKLAN BUAT POWER
 function watchAdForPower() {
   if(powerAdsWatched >= 3) return;
-  showZONEID();
+  showAdsterraAd(); // GANTI DARI MONETAG
   powerAdsWatched++;
   if(powerAdsWatched >= 3) {
     power += 1;
@@ -112,7 +132,7 @@ function watchAdForPower() {
 // NONTON IKLAN BUAT AUTO
 function watchAdForAuto() {
   if(autoAdsWatched >= 5) return;
-  showZONEID();
+  showAdsterraAd(); // GANTI DARI MONETAG
   autoAdsWatched++;
   if(autoAdsWatched >= 5) {
     auto = power; // speed = power kamu
@@ -132,25 +152,4 @@ setInterval(()=>{
     auto = 0;
     autoAdsWatched = 0; // reset biar bisa nonton lagi
     alert('Auto Click Habis. Nonton 5 iklan lagi!');
-    updateUI();
-  }
-}, 1000);
-
-// IKLAN OTOMATIS TIAP 5 MENIT
-setInterval(()=>{
-  let now = Date.now();
-  if(now - lastAdTime >= 300000){ // 300000ms = 5 menit
-    showZONEID();
-  }
-}, 60000); // cek tiap 1 menit
-
-// LEADERBOARD
-function loadLB() {
-  document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
-}
-loadLB();
-updateUI();
-tg.expand();
-</script>
-</body>
-</html>
+    updateUI
