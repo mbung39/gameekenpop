@@ -65,21 +65,21 @@ if(lastLogin!== today){
   localStorage.power = 1; localStorage.pAds = 0; localStorage.aAds = 0;
   localStorage.lastLogin = today; localStorage.lastAdTime = Date.now();
   localStorage.pTimer = 0; localStorage.aTimer = 0;
-  localStorage.pStep = 1; localStorage.aStep = 1; // RESET STEP
+  localStorage.pStep = 1; localStorage.aStep = 1;
   alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
 }
 
 let coins = +localStorage.coins || 0;
 let power = +localStorage.power || 1;
 let auto = +localStorage.auto || 0;
-let pAds = +localStorage.pAds || 0; // 0,1,2
-let aAds = +localStorage.aAds || 0; // 0,1,2
+let pAds = +localStorage.pAds || 0;
+let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
 let lastAdTime = +localStorage.lastAdTime || Date.now();
 let pTimer = +localStorage.pTimer || 0;
 let aTimer = +localStorage.aTimer || 0;
-let pStep = +localStorage.pStep || 1; // 1,2,3
-let aStep = +localStorage.aStep || 1; // 1,2,3
+let pStep = +localStorage.pStep || 1;
+let aStep = +localStorage.aStep || 1;
 
 let coinsTxt = document.getElementById('coins');
 let powerNowTxt = document.getElementById('powerNow');
@@ -99,48 +99,40 @@ document.getElementById('logo').onclick = (e) => {
   coins += totalKlik; showPlus('+'+totalKlik, e); save();
 }
 
-// === LOGIKA BARU V24: 3 KLIK PER VALIDASI ===
+// === LOGIKA V24.1 FIX STUCK 3/3 ===
 function handleValidasi(type){
   let now = Date.now();
   let ads = type==='power'? pAds : aAds;
   let step = type==='power'? pStep : aStep;
   let timer = type==='power'? pTimer : aTimer;
 
-  if(timer > now) return; // Lagi cooldown, diabaikan
-  if(ads >= 3) return;
+  if(timer > now) return;
 
   if(step === 1){
-    // KLIK 1: UMPAN DOANG
-    step++;
+    step++; // KLIK 1: UMPAN
   }
   else if(step === 2){
-    // KLIK 2: BUKA IKLAN
-    showAd();
+    showAd(); // KLIK 2: IKLAN
     ads++;
     step++;
   }
   else if(step === 3){
-    // KLIK 3: BUKA IKLAN + MULAI COOLDOWN 15S
-    showAd();
-    ads++;
-    timer = now + 15000; // Kunci 15 detik
-
-    // Kalau udah 3/3 langsung naik
-    if(ads >= 3){
-      if(type==='power' && power < 50){
-        power++;
-        alert(`Klik +1 Naik! Sekarang Total = +${power}`);
-      }
-      if(type==='auto'){
-        auto=power; autoEnd=now+3600000;
-        alert('Auto Aktif 1 Jam!');
-      }
-      ads = 0; // Reset
+    showAd(); // KLIK 3: IKLAN + NAIK + RESET
+    
+    if(type==='power' && power < 50){
+      power++;
+      alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
-    step = 1; // Reset step
+    if(type==='auto'){
+      auto=power; autoEnd=now+3600000;
+      alert('Auto Aktif 1 Jam!');
+    }
+
+    ads = 0; // RESET KE 0/3
+    step = 1; // RESET KE KLIK 1
+    timer = now + 15000; // COOLDOWN 15S
   }
 
-  // Simpan balik
   if(type==='power'){ pAds=ads; pStep=step; pTimer=timer; }
   else { aAds=ads; aStep=step; aTimer=timer; }
   save();
@@ -204,7 +196,7 @@ function save(){
   }
 }
 
-function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
+function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); }
 
 setInterval(()=>{
   if(auto > 0 && Date.now() < autoEnd){ coins += power + auto; }
