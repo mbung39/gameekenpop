@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>KenPOP Tap</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -10,19 +10,26 @@
 <script type='text/javascript' src='//pl31204126.profitabledisplayformat.com/12/34/56/123456.js'></script>
 
 <style>
-  body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding: 10px; user-select: none; -webkit-tap-highlight-color: transparent; }
-  #stats { display: flex; justify-content: space-around; font-size: 20px; font-weight: bold; margin-bottom: 10px;}
-  #btn { width: 250px; height: 250px; border: none; background: url('kenpop.png') no-repeat center; background-size: contain; cursor: pointer; transition: 0.1s; outline: none; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; 
+    height: 100vh; display: flex; flex-direction: column; justify-content: space-between;
+    overflow: hidden; /* Biar gak scroll */
+    padding: 5px;
+  }
+  #stats { display: flex; justify-content: space-around; font-size: 18px; font-weight: bold; padding: 8px 0;}
+  #btn { 
+    width: 200px; height: 200px; border: none; background: url('kenpop.png') no-repeat center; 
+    background-size: contain; cursor: pointer; transition: 0.1s; outline: none; margin: 0 auto;
+  }
   #btn:active { transform: scale(0.9); }
-  .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 10px; margin-top: 15px; }
-  .item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #3a3a5e; border-radius: 10px; margin: 5px 0; }
+  .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 8px; margin: 5px 10px; }
+  .item { display: flex; justify-content: space-between; align-items: center; padding: 6px; background: #3a3a5e; border-radius: 10px; margin: 4px 0; font-size: 14px; }
   .buy-btn { background: gold; color: black; border: none; padding: 5px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
   .buy-btn:disabled { background: gray; }
   #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
-  
-  /* 2. ADSTERRA BANNER 300x250 */
-  #ad-banner { width: 300px; height: 250px; margin: 15px auto; }
+  #ad-banner { width: 300px; height: 250px; margin: 5px auto; }
 </style>
 </head>
 <body>
@@ -40,6 +47,9 @@
     <h3>🛒 SHOP</h3>
     <div class="item">Klik +1 <button class="buy-btn" id="btnPower" onclick="watchAdForPower()">Nonton Iklan 0/3</button></div>
     <div class="item">Auto Click <button class="buy-btn" id="btnAuto" onclick="watchAdForAuto()">Nonton Iklan 0/5</button></div>
+    <button onclick="resetGame()" style="background: red; color: white; border: none; padding: 8px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px;">
+      🔄 RESET GAME
+    </button>
   </div>
 
   <div class="leaderboard">
@@ -56,15 +66,28 @@ let auto = parseInt(localStorage.getItem('auto')) || 0;
 let powerAdsWatched = parseInt(localStorage.getItem('powerAdsWatched')) || 0;
 let autoAdsWatched = parseInt(localStorage.getItem('autoAdsWatched')) || 0;
 let autoEndTime = parseInt(localStorage.getItem('autoEndTime')) || 0;
-let lastAdTime = parseInt(localStorage.getItem('lastAdTime')) || 0; // buat timer 5 menit
+let lastAdTime = parseInt(localStorage.getItem('lastAdTime')) || 0;
+let autoInterval;
+
+// FUNGSI IKLAN ADSTERRA - YANG BENER
+function showAdsterraAd(callback) {
+  if (typeof show_31204127 === 'function') {
+    show_31204127().then(() => { if(callback) callback(); });
+  } else {
+    alert('Iklan loading... Koin tetap masuk');
+    setTimeout(() => { if(callback) callback(); }, 2000); // fallback
+  }
+  lastAdTime = Date.now();
+  localStorage.setItem('lastAdTime', lastAdTime);
+}
 
 function updateUI() {
   document.getElementById('coins').innerText = coins;
-  document.getElementById('level').innerText = power;
+  document.getElementById('level').innerText = Math.floor(coins/100) + 1; // FIX LEVEL
   document.getElementById('btnPower').innerText = `Nonton Iklan ${powerAdsWatched}/3`;
   document.getElementById('btnAuto').innerText = `Nonton Iklan ${autoAdsWatched}/5`;
   
-  if(powerAdsWatched >= 3) document.getElementById('btnPower').innerText = "✅ Aktif";
+  if(powerAdsWatched >= 3) document.getElementById('btnPower').disabled = true;
   if(autoAdsWatched >= 5 && Date.now() < autoEndTime) document.getElementById('btnAuto').innerText = "⏰ Aktif 1 Jam";
   
   localStorage.setItem('coins', coins);
@@ -80,6 +103,7 @@ function updateUI() {
 // TAP
 document.getElementById('btn').onclick = (e) => {
   coins += power;
+  if(auto > 0) coins += auto;
   showFloat('+'+power, e);
   updateUI();
   tg.HapticFeedback.impactOccurred('light');
@@ -97,106 +121,83 @@ function showFloat(text, e) {
 }
 
 // 2. ADSTERRA BANNER 300x250 CODE
-atOptions = {
-	'key' : '31204127',
-	'format' : 'iframe',
-	'height' : 250,
-	'width' : 300,
-	'params' : {}
-};
+atOptions = { 'key' : '31204127', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
 document.write('<scr' + 'ipt type="text/javascript" src="//www.profitabledisplayformat.com/31204127/invoke.js"></scr' + 'ipt>');
-
-// FUNGSI IKLAN ADSTERRA - GANTI MONETAG
-function showAdsterraAd() {
-  // Social Bar auto muncul sendiri
-  // Buat trigger banner pop, kita reload banner
-  if (typeof _pop === 'function') {
-    _pop();
-  }
-  lastAdTime = Date.now();
-  localStorage.setItem('lastAdTime', lastAdTime);
-}
 
 // NONTON IKLAN BUAT POWER
 function watchAdForPower() {
-  if(powerAdsWatched >= 3) return;
-  showAdsterraAd(); // GANTI DARI MONETAG
-  powerAdsWatched++;
-  if(powerAdsWatched >= 3) {
-    power += 1;
-    alert('Klik +1 Aktif Permanen!');
-  }
-  updateUI();
+  if(powerAdsWatched >= 3) return alert('Maks 3x sehari!');
+  showAdsterraAd(() => {
+    powerAdsWatched++;
+    if(powerAdsWatched >= 3) {
+      power += 1;
+      alert('Klik +1 Aktif Permanen!');
+    }
+    updateUI();
+  });
 }
 
 // NONTON IKLAN BUAT AUTO
 function watchAdForAuto() {
-  if(autoAdsWatched >= 5) return;
-  showAdsterraAd(); // GANTI DARI MONETAG
-  autoAdsWatched++;
-  if(autoAdsWatched >= 5) {
-    auto = power; // speed = power kamu
-    autoEndTime = Date.now() + 3600000; // 1 jam
-    alert('Auto Click Aktif 1 Jam!');
-  }
-  updateUI();
+  if(autoAdsWatched >= 5) return alert('Maks 5x sehari!');
+  showAdsterraAd(() => {
+    autoAdsWatched++;
+    if(autoAdsWatched >= 5) {
+      auto = power; 
+      autoEndTime = Date.now() + 3600000; 
+      startAuto();
+      alert('Auto Click Aktif 1 Jam!');
+    }
+    updateUI();
+  });
 }
 
 // AUTO CLICK
-setInterval(()=>{
-  if(auto > 0 && Date.now() < autoEndTime) { 
-    coins += auto; 
-    updateUI(); 
-  }
-  if(Date.now() > autoEndTime && auto > 0){
-    auto = 0;
-    autoAdsWatched = 0; // reset biar bisa nonton lagi
-    alert('Auto Click Habis. Nonton 5 iklan lagi!');
-    updateUI();
-  }
-}, 1000);
-	
+function startAuto() {
+  clearInterval(autoInterval);
+  autoInterval = setInterval(()=>{
+    if(auto > 0 && Date.now() < autoEndTime) { 
+      coins += auto; 
+      updateUI(); 
+    }
+    if(Date.now() > autoEndTime && auto > 0){
+      auto = 0;
+      autoAdsWatched = 0; 
+      alert('Auto Click Habis. Nonton 5 iklan lagi!');
+      updateUI();
+    }
+  }, 1000);
+}
+
 // IKLAN OTOMATIS TIAP 5 MENIT
 setInterval(()=>{
   let now = Date.now();
-  if(now - lastAdTime >= 300000){ // 300000ms = 5 menit
-    showAdsterraAd();  // UDAH GANTI KE ADSTERRA
+  if(now - lastAdTime >= 300000){
+    showAdsterraAd(); 
   }
-}, 60000); // cek tiap 1 menit
+}, 60000);
 
-// LEADERBOARD
-function loadLB() {
-  document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
-}
-	<div class="leaderboard">
-    <h3>🏆 TOP 10</h3>
-    <div id="lb">Loading...</div>
-</div>
-
-<!-- TOMBOL RESET BARU -->
-<div style="margin-top: 15px;">
-  <button onclick="resetGame()" style="background: red; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer;">
-    🔄 RESET GAME
-  </button>
-</div>
-	// FUNGSI RESET GAME
+// RESET GAME
 function resetGame() {
-  if(confirm('Yakin mau reset semua data? Koin, Level, Auto bakal hilang!')) {
-    localStorage.clear(); // hapus semua data
-    coins = 0;
-    power = 1;
-    auto = 0;
-    powerAdsWatched = 0;
-    autoAdsWatched = 0;
-    autoEndTime = 0;
-    lastAdTime = 0;
+  if(confirm('Yakin mau reset semua data?')) {
+    localStorage.clear();
+    coins = 0; power = 1; auto = 0;
+    powerAdsWatched = 0; autoAdsWatched = 0;
+    autoEndTime = 0; lastAdTime = 0;
+    clearInterval(autoInterval);
     alert('Data berhasil di reset!');
     updateUI();
   }
 }
 
+// LEADERBOARD
+function loadLB() {
+  document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
+}
+
 loadLB();
 updateUI();
+startAuto();
 tg.expand();
 </script>
 </body>
