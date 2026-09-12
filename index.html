@@ -26,7 +26,7 @@
     border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0;
   }
 
-  /* FORM DAFTAR BARU */
+/* TAMBAHAN CSS DAFTAR */
 .daftar-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
 .daftar-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
 .btn-daftar { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
@@ -39,7 +39,7 @@
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
 
-<!-- FORM DAFTAR BARU -->
+<!-- TAMBAHAN FORM DAFTAR -->
 <div class="daftar-box" id="form-daftar">
   <h2>📝 DAFTAR KENPOP ID</h2>
   <input type="text" id="nama" placeholder="Nama Lengkap" required>
@@ -55,6 +55,7 @@
   <p class="id-besar" id="s-id"></p>
   <p style="font-size:12px; color:#aaa;">Simpan ID ini buat Login Game</p>
 </div>
+
 
 <div class="shop">
   <h2>🛒 SHOP</h2>
@@ -82,7 +83,7 @@
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 
-// LINK BACKEND KAMU BREE
+// LINK BACKEND KAMU
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
 // CEK RESET HARIAN JAM 00:00
@@ -160,16 +161,14 @@ async function daftar() {
       body: JSON.stringify(data)
     });
     
-    // SIMPAN KE LOCALSTORAGE BIAR GA MUNCUL LAGI
     localStorage.kenpopID = id;
     localStorage.kenpopNama = nama;
     localStorage.kenpopWA = wa;
     
-    // TAMPILIN STRUK
     document.getElementById('s-nama').innerText = nama;
     document.getElementById('s-wa').innerText = wa;
     document.getElementById('s-id').innerText = id;
-    document.getElementById('form-daftar').style.display = 'none'; // HILANG
+    document.getElementById('form-daftar').style.display = 'none';
     document.getElementById('struk').style.display = 'block';
 
   } catch (e) {
@@ -179,6 +178,7 @@ async function daftar() {
   }
 }
 
+// KODE GAME KAMU TETEP SAMA 100%
 btnPower.onclick = () => {
   if(pAds >= 3 || power >= 50) return;
   if(Date.now() - pTimer < 15000) return;
@@ -267,13 +267,7 @@ function save(){
   }
 }
 
-function tukar(){ 
-  if(coins >= 1000){ 
-    coins -= 1000; 
-    alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); 
-    save(); 
-  } else { alert('Koin kurang. Butuh 1000 koin'); } 
-}
+function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
 
 setInterval(()=>{
   if(auto > 0 && Date.now() < autoEnd){ coins += power + auto; }
