@@ -168,6 +168,33 @@ setInterval(()=>{
 function loadLB() {
   document.getElementById('lb').innerHTML = `1. Kamu - ${coins} koin<br>2. Player2 - 120 koin<br>3. Player3 - 80 koin`;
 }
+	<div class="leaderboard">
+    <h3>🏆 TOP 10</h3>
+    <div id="lb">Loading...</div>
+</div>
+
+<!-- TOMBOL RESET BARU -->
+<div style="margin-top: 15px;">
+  <button onclick="resetGame()" style="background: red; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+    🔄 RESET GAME
+  </button>
+</div>
+	// FUNGSI RESET GAME
+function resetGame() {
+  if(confirm('Yakin mau reset semua data? Koin, Level, Auto bakal hilang!')) {
+    localStorage.clear(); // hapus semua data
+    coins = 0;
+    power = 1;
+    auto = 0;
+    powerAdsWatched = 0;
+    autoAdsWatched = 0;
+    autoEndTime = 0;
+    lastAdTime = 0;
+    alert('Data berhasil di reset!');
+    updateUI();
+  }
+}
+
 loadLB();
 updateUI();
 tg.expand();
