@@ -25,12 +25,37 @@
     width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c;
     border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0;
   }
+
+  /* FORM DAFTAR BARU */
+ .daftar-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
+ .daftar-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
+ .btn-daftar { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
+ .struk { display:none; background:#334155; padding:20px; border-radius:10px; margin-top:20px; border:1px dashed #00ff88; }
+ .id-besar { font-size:24px; font-weight:bold; color:#00ff88; letter-spacing:2px; }
 </style>
 </head>
 <body>
 
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
+
+<!-- FORM DAFTAR BARU -->
+<div class="daftar-box" id="form-daftar">
+  <h2>📝 DAFTAR KENPOP ID</h2>
+  <input type="text" id="nama" placeholder="Nama Lengkap" required>
+  <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
+  <button class="btn-daftar" onclick="daftar()">GENERATE ID</button>
+</div>
+
+<div class="struk" id="struk">
+  <h2>STRUK REGISTRASI KENPOP</h2>
+  <p><b>Nama:</b> <span id="s-nama"></span></p>
+  <p><b>WA:</b> <span id="s-wa"></span></p>
+  <p><b>ID KENPOP:</b></p>
+  <p class="id-besar" id="s-id"></p>
+  <p style="font-size:12px; color:#aaa;">Simpan ID ini buat Login Game</p>
+</div>
+
 
 <div class="shop">
   <h2>🛒 SHOP</h2>
@@ -58,13 +83,16 @@
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 
+// LINK BACKEND KAMU BREE
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
+
 // CEK RESET HARIAN JAM 00:00
 let today = new Date().toISOString().split('T')[0];
 let lastLogin = localStorage.lastLogin || "";
 if(lastLogin!== today){
   localStorage.power = 1; localStorage.pAds = 0; localStorage.aAds = 0;
   localStorage.lastLogin = today; localStorage.lastAdTime = Date.now();
-  localStorage.pTimer = 0; localStorage.aTimer = 0; // RESET TIMER
+  localStorage.pTimer = 0; localStorage.aTimer = 0;
   alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
 }
 
@@ -75,8 +103,8 @@ let pAds = +localStorage.pAds || 0;
 let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
 let lastAdTime = +localStorage.lastAdTime || Date.now();
-let pTimer = +localStorage.pTimer || 0; // WAKTU MULAI VALIDASI POWER
-let aTimer = +localStorage.aTimer || 0; // WAKTU MULAI VALIDASI AUTO
+let pTimer = +localStorage.pTimer || 0;
+let aTimer = +localStorage.aTimer || 0;
 
 let coinsTxt = document.getElementById('coins');
 let powerNowTxt = document.getElementById('powerNow');
@@ -96,23 +124,64 @@ document.getElementById('logo').onclick = (e) => {
   coins += totalKlik; showPlus('+'+totalKlik, e); save();
 }
 
-// === INI BAGIAN YANG DIUBAH V23 ===
+// === FUNGSI DAFTAR BARU ===
+function generateID() {
+  return 'KP' + Date.now().toString().slice(-8) + Math.floor(Math.random()*90+10);
+}
+
+async function daftar() {
+  const nama = document.getElementById('nama').value;
+  const wa = document.getElementById('wa').value;
+  const btn = document.querySelector('.btn-daftar');
+
+  if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
+  if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
+
+  const id = generateID();
+  btn.disabled = true;
+  btn.innerText = 'MEMPROSES...';
+
+  const data = { id: id, nama: nama, wa: wa, menu: "PENDAFTARAN BARU", koin: coins };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(data)
+    });
+    
+    // TAMPILIN STRUK
+    document.getElementById('s-nama').innerText = nama;
+    document.getElementById('s-wa').innerText = wa;
+    document.getElementById('s-id').innerText = id;
+    document.getElementById('form-daftar').style.display = 'none';
+    document.getElementById('struk').style.display = 'block';
+    localStorage.kenpopID = id; // SIMPAN ID
+
+  } catch (e) {
+    alert('Gagal daftar. Cek koneksi.');
+    btn.disabled = false;
+    btn.innerText = 'GENERATE ID';
+  }
+}
+
+
 btnPower.onclick = () => {
   if(pAds >= 3 || power >= 50) return;
-  if(Date.now() - pTimer < 15000) return; // MASIH COOLDOWN
+  if(Date.now() - pTimer < 15000) return;
   
-  showAd(); // 1. BUKA IKLAN DULUAN
-  pAds++; // 2. LANGSUNG TINGKATIN pAds
-  pTimer = Date.now(); // 3. SIMPAN WAKTU MULAI
+  showAd();
+  pAds++;
+  pTimer = Date.now();
   save();
 }
 btnAuto.onclick = () => {
   if(aAds >= 6) return;
-  if(Date.now() - aTimer < 15000) return; // MASIH COOLDOWN
+  if(Date.now() - aTimer < 15000) return;
   
-  showAd(); // 1. BUKA IKLAN DULUAN
-  aAds++; // 2. LANGSUNG TINGKATIN aAds
-  aTimer = Date.now(); // 3. SIMPAN WAKTU MULAI
+  showAd();
+  aAds++;
+  aTimer = Date.now();
   save();
 }
 
@@ -126,7 +195,7 @@ function cekValidasi(type){
     let sisa = 15 - Math.floor((Date.now() - timer)/1000);
     btn.disabled = true;
     btn.innerText = `Tunggu ${sisa}s...`;
-    return false; // MASIH COOLDOWN
+    return false;
   } else {
     btn.disabled = false;
     if(ads >= max){
@@ -169,13 +238,11 @@ function save(){
   coinsTxt.innerText=coins.toLocaleString('id');
   powerNowTxt.innerText = power;
 
-  // UPDATE TOMBOL POWER
   cekValidasi('power');
   if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
   else if(pAds >= 3){ btnPower.innerText = "✅ Naikkan Klik"; }
   else { btnPower.innerText = `Validasi ${pAds}/3`; }
 
-  // UPDATE TOMBOL AUTO
   cekValidasi('auto');
   if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
@@ -187,14 +254,20 @@ function save(){
   }
 }
 
-function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
+function tukar(){ 
+  if(coins >= 1000){ 
+    coins -= 1000; 
+    alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); 
+    save(); 
+  } else { alert('Koin kurang. Butuh 1000 koin'); } 
+}
 
 setInterval(()=>{
   if(auto > 0 && Date.now() < autoEnd){ coins += power + auto; }
   save();
 },1000);
 
-save(); // JALAN PERTAMA KALI BUAT CEK TIMER LANJUT
+save();
 </script>
 </body>
 </html>
