@@ -142,14 +142,30 @@ window.onload = function() {
   }
   initElements();
 }
-
 function initElements(){
   coinsTxt = document.getElementById('coins');
   powerNowTxt = document.getElementById('powerNow');
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
-}
 
+  // TARUH EVENTNYA DISINI
+  document.getElementById('logo').onclick = (e) => {
+    let totalKlik = power + auto;
+    coins += totalKlik; showPlus('+'+totalKlik, e); save();
+  }
+
+  btnPower.onclick = () => {
+    if(pAds >= 3 || power >= 50) return;
+    if(Date.now() - pTimer < 15000) return;
+    showAd(); pAds++; pTimer = Date.now(); save();
+  }
+  
+  btnAuto.onclick = () => {
+    if(aAds >= 6) return;
+    if(Date.now() - aTimer < 15000) return;
+    showAd(); aAds++; aTimer = Date.now(); save();
+  }
+}
 async function login() {
   const nama = document.getElementById('nama').value.trim();
   const wa = document.getElementById('wa').value.trim();
