@@ -45,10 +45,10 @@ let user = tg.initDataUnsafe.user || {id: 123};
 let coins = parseInt(localStorage.getItem('coins')) || 0;
 let power = parseInt(localStorage.getItem('power')) || 1;
 let auto = parseInt(localStorage.getItem('auto')) || 0;
-let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
 let powerAdsWatched = parseInt(localStorage.getItem('powerAdsWatched')) || 0;
 let autoAdsWatched = parseInt(localStorage.getItem('autoAdsWatched')) || 0;
 let autoEndTime = parseInt(localStorage.getItem('autoEndTime')) || 0;
+let lastAdTime = parseInt(localStorage.getItem('lastAdTime')) || 0; // buat timer 5 menit
 
 function updateUI() {
   document.getElementById('coins').innerText = coins;
@@ -62,23 +62,19 @@ function updateUI() {
   localStorage.setItem('coins', coins);
   localStorage.setItem('power', power);
   localStorage.setItem('auto', auto);
-  localStorage.setItem('clickCount', clickCount);
   localStorage.setItem('powerAdsWatched', powerAdsWatched);
   localStorage.setItem('autoAdsWatched', autoAdsWatched);
   localStorage.setItem('autoEndTime', autoEndTime);
+  localStorage.setItem('lastAdTime', lastAdTime);
   tg.sendData(JSON.stringify({coins, power, auto}));
 }
 
 // TAP
 document.getElementById('btn').onclick = (e) => {
   coins += power;
-  clickCount++;
   showFloat('+'+power, e);
   updateUI();
   tg.HapticFeedback.impactOccurred('light');
-  
-  // Iklan tiap 50 klik
-  if(clickCount % 50 === 0) showZONEID();
 }
 
 // FLOATING TEXT
@@ -96,6 +92,8 @@ function showFloat(text, e) {
 function showZONEID() {
   if (typeof show_11780928 === 'function') {
     show_11780928();
+    lastAdTime = Date.now();
+    localStorage.setItem('lastAdTime', lastAdTime);
   }
 }
 
@@ -137,6 +135,14 @@ setInterval(()=>{
     updateUI();
   }
 }, 1000);
+
+// IKLAN OTOMATIS TIAP 5 MENIT
+setInterval(()=>{
+  let now = Date.now();
+  if(now - lastAdTime >= 300000){ // 300000ms = 5 menit
+    showZONEID();
+  }
+}, 60000); // cek tiap 1 menit
 
 // LEADERBOARD
 function loadLB() {
