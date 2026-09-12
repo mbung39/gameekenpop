@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KenPOP Tap</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- Ganti ini dengan kode Monetag Banner kamu -->
-<script>(function(s){s.dataset.zone='11780929',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<!-- KODE MONETAG POPUNDER ZONE 11780928 -->
+<script>(function(s){s.dataset.zone='11780928',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <style>
   body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding: 10px; }
   #stats { display: flex; justify-content: space-around; font-size: 20px; font-weight: bold; margin-bottom: 10px;}
@@ -15,8 +15,8 @@
   #btn:active { transform: scale(0.9); }
   .shop, .leaderboard { background: #2a2a4e; border-radius: 15px; padding: 10px; margin-top: 15px; }
   .item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #3a3a5e; border-radius: 10px; margin: 5px 0; }
-  .buy-btn { background: gold; color: black; border: none; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
-  #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; }
+  .buy-btn { background: gold; color: black; border: none; padding: 5px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  #float { position: absolute; color: gold; font-weight: bold; animation: float 1s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
 </style>
 </head>
@@ -41,7 +41,7 @@
 
 <script>
 let tg = window.Telegram.WebApp;
-let user = tg.initDataUnsafe.user;
+let user = tg.initDataUnsafe.user || {id: 123};
 let coins = parseInt(localStorage.getItem('coins')) || 0;
 let power = parseInt(localStorage.getItem('power')) || 1;
 let auto = parseInt(localStorage.getItem('auto')) || 0;
@@ -52,6 +52,8 @@ function updateUI() {
   localStorage.setItem('coins', coins);
   localStorage.setItem('power', power);
   localStorage.setItem('auto', auto);
+  // Kirim data ke bot biar kesave
+  tg.sendData(JSON.stringify({coins, power, auto}));
 }
 
 // TAP
@@ -60,6 +62,8 @@ document.getElementById('btn').onclick = (e) => {
   showFloat('+'+power, e);
   updateUI();
   tg.HapticFeedback.impactOccurred('light');
+  // Munculin iklan tiap 10 klik biar cepet cuan
+  if(coins % 50 === 0) showZONEID();
 }
 
 // FLOATING TEXT
@@ -73,34 +77,12 @@ function showFloat(text, e) {
   setTimeout(()=>float.remove(), 1000);
 }
 
+// FUNGSI IKLAN MONETAG
+function showZONEID() {
+  if (typeof show_11780928 === 'function') {
+    show_11780928();
+  }
+}
+
 // BELI UPGRADE + IKLAN
-function buyUpgrade(type, price) {
-  if(coins < price) return alert('Koin kurang!');
-  // Panggil iklan Monetag dulu
-  show_8888888().then(() => {
-    coins -= price;
-    if(type == 'power') power += 1;
-    if(type == 'auto') auto += 1;
-    alert('Upgrade Berhasil!');
-    updateUI();
-  }).catch(()=> alert('Nonton iklan dibatalkan'));
-}
-
-// AUTO CLICK
-setInterval(()=>{
-  if(auto > 0) { coins += auto; updateUI(); }
-}, 1000);
-
-// LEADERBOARD PALSU DULU - nanti ganti ke Supabase
-function loadLB() {
-  document.getElementById('lb').innerHTML = `
-  1. Kamu - ${coins} koin<br>
-  2. Player2 - 120 koin<br>
-    3. Player3 - 80 koin`;
-}
-loadLB();
-updateUI();
-tg.expand();
-</script>
-</body>
-</html>
+function buyUpgrade
