@@ -28,7 +28,7 @@
     background: #1e293b;
     border: 3px solid #fb923c;
     border-radius: 15px;
-    margin: 15px 0;
+    margin: 15px 0; /* UDAH DI ATAS SHOP JADI GA PERLU MARGIN BAWAH GEDE */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,20 +42,7 @@
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
 
-<div class="shop">
-  <h2>🛒 SHOP</h2>
-  <div class="item">
-    <span>Klik +1<br><small>Total = +<span id="powerNow">1</span></small></span>
-    <button id="btnPower">Validasi 0/3</button>
-  </div>
-  <div class="item">
-    <span>Auto Click 1 Jam</span>
-    <button id="btnAuto">Validasi 0/6</button>
-  </div>
-  <button class="tukar" onclick="tukar()">🍗 TUKAR MAKAN</button>
-</div>
-
-<!-- INI KOTAK BANNER ADSTERRA 320x50 -->
+<!-- INI KOTAK BANNER ADSTERRA 320x50 PINDAH KE ATAS -->
 <div id="bannerBox">
 <script type="text/javascript">
 	atOptions = {
@@ -67,6 +54,20 @@
 	};
 </script>
 <script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
+</div>
+
+<!-- SHOP PINDAH KE BAWAH BANNER -->
+<div class="shop">
+  <h2>🛒 SHOP</h2>
+  <div class="item">
+    <span>Klik +1<br><small>Total = +<span id="powerNow">1</span></small></span>
+    <button id="btnPower">Validasi 0/3</button>
+  </div>
+  <div class="item">
+    <span>Auto Click 1 Jam</span>
+    <button id="btnAuto">Validasi 0/6</button>
+  </div>
+  <button class="tukar" onclick="tukar()">🍗 TUKAR MAKAN</button>
 </div>
 
 <script>
@@ -208,7 +209,7 @@ function save(){
   }
 }
 
-function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); } }
+function tukar(){ if(coins >= 1000){ coins -= 1000; alert('Selamat! Tukar 1 Nasi. SS bukti dan chat admin KenPOP'); save(); } else { alert('Koin kurang. Butuh 1000 koin'); }
 
 setInterval(()=>{
   if(auto > 0 && Date.now() < autoEnd){
