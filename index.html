@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V26</title>
+<title>KenPOP Tap V26.2</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V26</h2>
+  <h2>👋 SELAMAT DATANG V26.2</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -86,21 +86,29 @@
 let tg = window.Telegram.WebApp; tg.expand();
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
-// === V26: KUNCI 1 HP 1 WA ===
-let currentWA = ""; // KUNCI UTAMA
-function getKey(key){ return key + '_' + currentWA; } // BIKIN KUNCI MISAH
+let currentWA = "";
+function getKey(key){ return key + '_' + currentWA; }
 
 let historyTukar = [];
+let coins, power, auto, pAds, aAds, autoEnd, lastAdTime, pTimer, aTimer;
+let coinsTxt, powerNowTxt, btnPower, btnAuto;
 
 window.onload = function() {
   if(localStorage.kenpopNama && localStorage.kenpopWA) {
-    currentWA = localStorage.kenpopWA; // SET KUNCI DULU
-    historyTukar = JSON.parse(localStorage[getKey('historyTukar')] || "[]"); // LOAD HISTORY SESUAI WA
+    currentWA = localStorage.kenpopWA;
+    historyTukar = JSON.parse(localStorage[getKey('historyTukar')] || "[]");
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('welcomeBox').style.display = 'block';
     document.getElementById('w-nama').innerText = localStorage.kenpopNama;
     document.getElementById('w-wa').innerText = currentWA;
-    loadData(); // LOAD DATA SESUAI WA
+    loadData(); 
+  }
+  
+  // LOGO BISA DIKLIK WALAUPUN BELUM LOGIN
+  document.getElementById('logo').onclick = (e) => {
+    if(!currentWA) return;
+    let totalKlik = power + auto;
+    coins += totalKlik; showPlus('+'+totalKlik, e); save();
   }
 }
 
@@ -112,23 +120,18 @@ async function login() {
   if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
   if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
 
-  // KUNCI 1 HP 1 AKUN KETAT
   if(localStorage.kenpopWA && localStorage.kenpopWA!== wa){
     alert('1 HP hanya untuk 1 akun! \nAkun aktif: ' + localStorage.kenpopWA);
     return;
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  const data = { nama: nama, wa: wa, menu: "LOGIN BARU V26" };
-  try {
-    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-  } catch (e) {}
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V26.2"}) });
 
-  currentWA = wa; // SET KUNCI
+  currentWA = wa;
   localStorage.kenpopNama = nama;
   localStorage.kenpopWA = wa;
 
-  // BUAT DATA BARU KALO BELUM ADA
   if(!localStorage[getKey('coins')]){
     localStorage[getKey('coins')] = 0; localStorage[getKey('power')] = 1; localStorage[getKey('auto')] = 0;
     localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0; localStorage[getKey('autoEnd')] = 0;
@@ -156,9 +159,6 @@ function logout(){
   }
 }
 
-let coins, power, auto, pAds, aAds, autoEnd, lastAdTime, pTimer, aTimer;
-let coinsTxt, powerNowTxt, btnPower, btnAuto;
-
 function loadData(){
   let today = new Date().toISOString().split('T')[0];
   let lastLogin = localStorage[getKey('lastLogin')] || "";
@@ -183,6 +183,19 @@ function loadData(){
   powerNowTxt = document.getElementById('powerNow');
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
+
+  // FIX: EVENT KLIK DIPINDAH KE SINI SETELAH getElementById
+  btnPower.onclick = () => {
+    if(pAds >= 3 || power >= 50) return;
+    if(Date.now() - pTimer < 15000) return;
+    showAd(); pAds++; pTimer = Date.now(); save();
+  }
+  btnAuto.onclick = () => {
+    if(aAds >= 6) return;
+    if(Date.now() - aTimer < 15000) return;
+    showAd(); aAds++; aTimer = Date.now(); save();
+  }
+
   save();
 }
 
@@ -192,22 +205,6 @@ function showAd() {
   s.src = 'https://al5sm.com/tag.min.js';
   document.body.appendChild(s);
   lastAdTime = Date.now(); localStorage[getKey('lastAdTime')] = lastAdTime;
-}
-
-document.getElementById('logo').onclick = (e) => {
-  let totalKlik = power + auto;
-  coins += totalKlik; showPlus('+'+totalKlik, e); save();
-}
-
-btnPower.onclick = () => {
-  if(pAds >= 3 || power >= 50) return;
-  if(Date.now() - pTimer < 15000) return;
-  showAd(); pAds++; pTimer = Date.now(); save();
-}
-btnAuto.onclick = () => {
-  if(aAds >= 6) return;
-  if(Date.now() - aTimer < 15000) return;
-  showAd(); aAds++; aTimer = Date.now(); save();
 }
 
 function cekValidasi(type){
@@ -255,7 +252,7 @@ function prosesTukar(menu, harga){
   let dataStruk = { tgl, jam, menu, harga, sisa: coins, nama: localStorage.kenpopNama, wa: currentWA };
 
   historyTukar.unshift(dataStruk);
-  localStorage[getKey('historyTukar')] = JSON.stringify(historyTukar); // SAVE SESUAI WA
+  localStorage[getKey('historyTukar')] = JSON.stringify(historyTukar);
 
   fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...dataStruk, type:"TUKAR"}) });
   tampilStruk(dataStruk);
