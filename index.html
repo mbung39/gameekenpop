@@ -36,11 +36,11 @@
   <h2>🛒 SHOP</h2>
   <div class="item">
     <span>Klik +1<br><small>Total = +<span id="powerNow">1</span></small></span>
-    <button id="btnPower">Validasi 0/3</button>
+    <button id="btnPower">VALIDASI</button>
   </div>
   <div class="item">
     <span>Auto Click 1 Jam</span>
-    <button id="btnAuto">Validasi 0/6</button>
+    <button id="btnAuto">VALIDASI</button>
   </div>
   <button class="tukar" onclick="tukar()">🍗 TUKAR MAKAN</button>
 </div>
@@ -64,19 +64,22 @@ let lastLogin = localStorage.lastLogin || "";
 if(lastLogin!== today){
   localStorage.power = 1; localStorage.pAds = 0; localStorage.aAds = 0;
   localStorage.lastLogin = today; localStorage.lastAdTime = Date.now();
-  localStorage.pTimer = 0; localStorage.aTimer = 0; // RESET TIMER
+  localStorage.pTimer = 0; localStorage.aTimer = 0;
+  localStorage.pStep = 1; localStorage.aStep = 1; // RESET STEP
   alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
 }
 
 let coins = +localStorage.coins || 0;
 let power = +localStorage.power || 1;
 let auto = +localStorage.auto || 0;
-let pAds = +localStorage.pAds || 0;
-let aAds = +localStorage.aAds || 0;
+let pAds = +localStorage.pAds || 0; // 0,1,2
+let aAds = +localStorage.aAds || 0; // 0,1,2
 let autoEnd = +localStorage.autoEnd || 0;
 let lastAdTime = +localStorage.lastAdTime || Date.now();
-let pTimer = +localStorage.pTimer || 0; // WAKTU MULAI VALIDASI POWER
-let aTimer = +localStorage.aTimer || 0; // WAKTU MULAI VALIDASI AUTO
+let pTimer = +localStorage.pTimer || 0;
+let aTimer = +localStorage.aTimer || 0;
+let pStep = +localStorage.pStep || 1; // 1,2,3
+let aStep = +localStorage.aStep || 1; // 1,2,3
 
 let coinsTxt = document.getElementById('coins');
 let powerNowTxt = document.getElementById('powerNow');
@@ -96,52 +99,55 @@ document.getElementById('logo').onclick = (e) => {
   coins += totalKlik; showPlus('+'+totalKlik, e); save();
 }
 
-// === INI BAGIAN YANG DIUBAH V23 ===
-btnPower.onclick = () => {
-  if(pAds >= 3 || power >= 50) return;
-  if(Date.now() - pTimer < 15000) return; // MASIH COOLDOWN
-  
-  showAd(); // 1. BUKA IKLAN DULUAN
-  pAds++; // 2. LANGSUNG TINGKATIN pAds
-  pTimer = Date.now(); // 3. SIMPAN WAKTU MULAI
-  save();
-}
-btnAuto.onclick = () => {
-  if(aAds >= 6) return;
-  if(Date.now() - aTimer < 15000) return; // MASIH COOLDOWN
-  
-  showAd(); // 1. BUKA IKLAN DULUAN
-  aAds++; // 2. LANGSUNG TINGKATIN aAds
-  aTimer = Date.now(); // 3. SIMPAN WAKTU MULAI
-  save();
-}
-
-function cekValidasi(type){
-  let btn = type==='power'? btnPower : btnAuto;
-  let timer = type==='power'? pTimer : aTimer;
-  let max = type==='power'? 3 : 6;
+// === LOGIKA BARU V24: 3 KLIK PER VALIDASI ===
+function handleValidasi(type){
+  let now = Date.now();
   let ads = type==='power'? pAds : aAds;
+  let step = type==='power'? pStep : aStep;
+  let timer = type==='power'? pTimer : aTimer;
 
-  if(Date.now() - timer < 15000 && timer > 0){
-    let sisa = 15 - Math.floor((Date.now() - timer)/1000);
-    btn.disabled = true;
-    btn.innerText = `Tunggu ${sisa}s...`;
-    return false; // MASIH COOLDOWN
-  } else {
-    btn.disabled = false;
-    if(ads >= max){
+  if(timer > now) return; // Lagi cooldown, diabaikan
+  if(ads >= 3) return;
+
+  if(step === 1){
+    // KLIK 1: UMPAN DOANG
+    step++;
+  }
+  else if(step === 2){
+    // KLIK 2: BUKA IKLAN
+    showAd();
+    ads++;
+    step++;
+  }
+  else if(step === 3){
+    // KLIK 3: BUKA IKLAN + MULAI COOLDOWN 15S
+    showAd();
+    ads++;
+    timer = now + 15000; // Kunci 15 detik
+
+    // Kalau udah 3/3 langsung naik
+    if(ads >= 3){
       if(type==='power' && power < 50){
-        power++; pAds=0; pTimer=0;
+        power++;
         alert(`Klik +1 Naik! Sekarang Total = +${power}`);
       }
       if(type==='auto'){
-        auto=power; autoEnd=Date.now()+3600000; aAds=0; aTimer=0;
+        auto=power; autoEnd=now+3600000;
         alert('Auto Aktif 1 Jam!');
       }
+      ads = 0; // Reset
     }
-    return true;
+    step = 1; // Reset step
   }
+
+  // Simpan balik
+  if(type==='power'){ pAds=ads; pStep=step; pTimer=timer; }
+  else { aAds=ads; aStep=step; aTimer=timer; }
+  save();
 }
+
+btnPower.onclick = () => handleValidasi('power');
+btnAuto.onclick = () => handleValidasi('auto');
 
 function formatTime(ms) {
   let totalSec = Math.floor(ms / 1000);
@@ -159,31 +165,42 @@ function showPlus(txt,e){
 
 function save(){
   let now = Date.now();
-  if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; }
+  if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aStep = 1; aTimer = 0; }
   if(now - lastAdTime >= 300000){ showAd(); }
 
   localStorage.coins=coins; localStorage.power=power; localStorage.auto=auto;
   localStorage.pAds=pAds; localStorage.aAds=aAds; localStorage.autoEnd=autoEnd;
   localStorage.pTimer=pTimer; localStorage.aTimer=aTimer;
+  localStorage.pStep=pStep; localStorage.aStep=aStep;
 
   coinsTxt.innerText=coins.toLocaleString('id');
   powerNowTxt.innerText = power;
 
   // UPDATE TOMBOL POWER
-  cekValidasi('power');
-  if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
-  else if(pAds >= 3){ btnPower.innerText = "✅ Naikkan Klik"; }
-  else { btnPower.innerText = `Validasi ${pAds}/3`; }
+  if(pTimer > now){
+    let sisa = Math.ceil((pTimer - now)/1000);
+    btnPower.innerText = `TUNGGU ${sisa}s...`;
+    btnPower.disabled = true;
+  } else {
+    btnPower.disabled = false;
+    if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
+    else if(pStep === 1){ btnPower.innerText = `VALIDASI ${pAds}/3`; }
+    else { btnPower.innerText = `KLIK LAGI ${pAds}/3`; }
+  }
 
   // UPDATE TOMBOL AUTO
-  cekValidasi('auto');
-  if(now < autoEnd && auto > 0){
+  if(aTimer > now){
+    let sisa = Math.ceil((aTimer - now)/1000);
+    btnAuto.innerText = `TUNGGU ${sisa}s...`;
+    btnAuto.disabled = true;
+  } else if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
     btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
-  } else if(aAds >= 6){
-    btnAuto.innerText = "✅ Aktifkan Auto";
+    btnAuto.disabled = true;
   } else {
-    btnAuto.innerText = `Validasi ${aAds}/6`;
+    btnAuto.disabled = false;
+    if(aStep === 1){ btnAuto.innerText = `VALIDASI ${aAds}/3`; }
+    else { btnAuto.innerText = `KLIK LAGI ${aAds}/3`; }
   }
 }
 
@@ -194,7 +211,7 @@ setInterval(()=>{
   save();
 },1000);
 
-save(); // JALAN PERTAMA KALI BUAT CEK TIMER LANJUT
+save();
 </script>
 </body>
 </html>
