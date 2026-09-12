@@ -25,9 +25,28 @@
     width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c;
     border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0;
   }
+
+/* LOGIN BOX */
+.login-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
+.login-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
+.btn-login { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
+.welcome { display:none; background:#334155; padding:15px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
 </style>
 </head>
 <body>
+
+<!-- LOGIN BOX BARU -->
+<div class="login-box" id="loginBox">
+  <h2>👋 SELAMAT DATANG</h2>
+  <input type="text" id="nama" placeholder="Nama Kamu" required>
+  <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
+  <button class="btn-login" onclick="login()">MASUK GAME</button>
+</div>
+
+<div class="welcome" id="welcomeBox">
+  <h3>Halo <span id="w-nama"></span>!</h3>
+  <p>WA: <span id="w-wa"></span></p>
+</div>
 
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
@@ -58,13 +77,63 @@
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 
+// LINK BACKEND KAMU
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
+
+// CEK UDAH LOGIN ATAU BELUM
+window.onload = function() {
+  if(localStorage.kenpopNama && localStorage.kenpopWA) {
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('welcomeBox').style.display = 'block';
+    document.getElementById('w-nama').innerText = localStorage.kenpopNama;
+    document.getElementById('w-wa').innerText = localStorage.kenpopWA;
+  }
+}
+
+async function login() {
+  const nama = document.getElementById('nama').value;
+  const wa = document.getElementById('wa').value;
+  const btn = document.querySelector('.btn-login');
+
+  if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
+  if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
+
+  btn.disabled = true;
+  btn.innerText = 'MEMPROSES...';
+
+  const data = { nama: nama, wa: wa, menu: "LOGIN BARU" };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(data)
+    });
+    
+    localStorage.kenpopNama = nama;
+    localStorage.kenpopWA = wa;
+    
+    document.getElementById('w-nama').innerText = nama;
+    document.getElementById('w-wa').innerText = wa;
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('welcomeBox').style.display = 'block';
+    alert('Login Berhasil! Selamat bermain');
+
+  } catch (e) {
+    alert('Gagal login. Cek koneksi.');
+    btn.disabled = false;
+    btn.innerText = 'MASUK GAME';
+  }
+}
+
+
 // CEK RESET HARIAN JAM 00:00
 let today = new Date().toISOString().split('T')[0];
 let lastLogin = localStorage.lastLogin || "";
 if(lastLogin!== today){
   localStorage.power = 1; localStorage.pAds = 0; localStorage.aAds = 0;
   localStorage.lastLogin = today; localStorage.lastAdTime = Date.now();
-  localStorage.pTimer = 0; localStorage.aTimer = 0; // RESET TIMER
+  localStorage.pTimer = 0; localStorage.aTimer = 0;
   alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
 }
 
@@ -75,8 +144,8 @@ let pAds = +localStorage.pAds || 0;
 let aAds = +localStorage.aAds || 0;
 let autoEnd = +localStorage.autoEnd || 0;
 let lastAdTime = +localStorage.lastAdTime || Date.now();
-let pTimer = +localStorage.pTimer || 0; // WAKTU MULAI VALIDASI POWER
-let aTimer = +localStorage.aTimer || 0; // WAKTU MULAI VALIDASI AUTO
+let pTimer = +localStorage.pTimer || 0;
+let aTimer = +localStorage.aTimer || 0;
 
 let coinsTxt = document.getElementById('coins');
 let powerNowTxt = document.getElementById('powerNow');
@@ -96,23 +165,22 @@ document.getElementById('logo').onclick = (e) => {
   coins += totalKlik; showPlus('+'+totalKlik, e); save();
 }
 
-// === INI BAGIAN YANG DIUBAH V23 ===
 btnPower.onclick = () => {
   if(pAds >= 3 || power >= 50) return;
-  if(Date.now() - pTimer < 15000) return; // MASIH COOLDOWN
+  if(Date.now() - pTimer < 15000) return;
   
-  showAd(); // 1. BUKA IKLAN DULUAN
-  pAds++; // 2. LANGSUNG TINGKATIN pAds
-  pTimer = Date.now(); // 3. SIMPAN WAKTU MULAI
+  showAd();
+  pAds++;
+  pTimer = Date.now();
   save();
 }
 btnAuto.onclick = () => {
   if(aAds >= 6) return;
-  if(Date.now() - aTimer < 15000) return; // MASIH COOLDOWN
+  if(Date.now() - aTimer < 15000) return;
   
-  showAd(); // 1. BUKA IKLAN DULUAN
-  aAds++; // 2. LANGSUNG TINGKATIN aAds
-  aTimer = Date.now(); // 3. SIMPAN WAKTU MULAI
+  showAd();
+  aAds++;
+  aTimer = Date.now();
   save();
 }
 
@@ -126,7 +194,7 @@ function cekValidasi(type){
     let sisa = 15 - Math.floor((Date.now() - timer)/1000);
     btn.disabled = true;
     btn.innerText = `Tunggu ${sisa}s...`;
-    return false; // MASIH COOLDOWN
+    return false;
   } else {
     btn.disabled = false;
     if(ads >= max){
@@ -169,13 +237,11 @@ function save(){
   coinsTxt.innerText=coins.toLocaleString('id');
   powerNowTxt.innerText = power;
 
-  // UPDATE TOMBOL POWER
   cekValidasi('power');
   if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
   else if(pAds >= 3){ btnPower.innerText = "✅ Naikkan Klik"; }
   else { btnPower.innerText = `Validasi ${pAds}/3`; }
 
-  // UPDATE TOMBOL AUTO
   cekValidasi('auto');
   if(now < autoEnd && auto > 0){
     let sisa = autoEnd - now;
@@ -194,7 +260,7 @@ setInterval(()=>{
   save();
 },1000);
 
-save(); // JALAN PERTAMA KALI BUAT CEK TIMER LANJUT
+save();
 </script>
 </body>
 </html>
