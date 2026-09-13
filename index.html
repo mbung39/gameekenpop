@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V22.9</title>
+<title>KenPOP Tap V23.0 SocialBar</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V22.9</h2>
+  <h2>👋 SELAMAT DATANG V23.0</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -82,10 +82,12 @@
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
+<!-- SOCIAL BAR ADSTERRA LU - TARUH PALING BAWAH -->
+<script src="https://pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js"></script>
+
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
-const ADSTERRA_DIRECT = "https://pl31315068.profitableratecpmnetwork.com/32/31/9b/32319b7e5c5aa6b36baf37c9b49b6460"; // DIRECT LINK LU
 
 let currentWA = "";
 function getKey(key){ return key + '_' + currentWA; }
@@ -138,7 +140,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V22.9"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.0"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -199,7 +201,7 @@ function loadData(){
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
-    showAd(); // IKLAN MUNCUL DISINI
+    showAd(); // SOCIAL BAR OTOMATIS MUNCUL
     pAds++;
     pTimer = Date.now();
     if(pAds >= 3){
@@ -213,7 +215,7 @@ function loadData(){
   btnAuto.onclick = () => {
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
-    showAd(); // IKLAN MUNCUL DISINI
+    showAd(); // SOCIAL BAR OTOMATIS MUNCUL
     aAds++;
     aTimer = Date.now();
     if(aAds >= 6){
@@ -225,12 +227,16 @@ function loadData(){
   }
 
   save();
-  setInterval(save, 1000); // UPDATE TIMER TIAP DETIK
+  setInterval(save, 1000);
 }
 
 function showAd() {
-  // FIX PALING AMPUH BUAT ADSTERRA BARU
-  window.open(ADSTERRA_DIRECT, '_blank');
+  // GANTI POPUNDER JADI SOCIAL BAR
+  // Social Bar otomatis muncul pas script di load
+  // Jadi kita reload script nya biar muncul lagi
+  let s = document.createElement('script');
+  s.src = "https://pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js?"+Date.now();
+  document.body.appendChild(s);
 }
 
 function cekValidasi(type){
