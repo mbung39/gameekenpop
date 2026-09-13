@@ -3,503 +3,226 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.9.1 FixHistory</title>
-
+<title>Pet Chicken Farm V1.4</title>
 <style>
-    * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
-  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 120px; }
-  #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
-  #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
-  #logo:active { transform: scale(0.88); }
-.shop { background: #1e293b; padding: 15px; border-radius: 15px; margin: 15px 0; }
-.item { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 12px; border-radius: 10px; margin: 8px 0; }
-.item span small { font-size: 12px; color: #94a3b8; }
-  button { background: gold; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-  button:disabled { background: gray; cursor: not-allowed; }
-.tukar-group { display:flex; gap:10px; margin-top:10px; }
-.tukar { background: #22c55e; color: white; width: 50%; }
-.tukar-history { background: #3b82f6; color: white; width: 50%; }
-  #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
-  @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
-  #bannerBox { width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0; }
-  
-.ads-bottom-wrap { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
-.ads-bottom-box { width: 160px; height: 300px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+* { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
+body { background: linear-gradient(to bottom, #a3e635, #84cc16); color: #1a2e05; font-family: 'Comic Sans MS', cursive; padding: 10px; margin: 0; min-height: 100vh; }
 
-.login-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
-.login-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
-.btn-login { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
-.btn-admin { width:100%; padding:12px; background: #25D366; color:#000; border:none; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer; margin-top:8px; }
-.welcome { display:none; background:#334155; padding:15px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
-.btn-logout{ width:100%; padding:12px; background: linear-gradient(45deg, #e74c3c, #c0392b); color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px; }
-.btn-logout:hover{ background: linear-gradient(45deg, #c0392b, #a93226); }
-.btn-reset-admin{ width:100%; padding:12px; background: linear-gradient(45deg, #ef4444, #dc2626); color:white; border:none; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer; margin-top:5px; }
-.popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center; }
-.popup-box { background:#1e293b; padding:20px; border-radius:15px; width:90%; max-width:400px; border:2px solid gold; max-height:80vh; overflow-y:auto; }
-.popup-item { background:#334155; padding:12px; border-radius:10px; margin:10px 0; display:flex; justify-content:space-between; align-items:center; }
-.btn-tukar-popup { background:#22c55e; color:white; padding:8px 12px; }
-.btn-tutup { background:#ef4444; color:white; width:100%; margin-top:15px; }
-.struk { text-align:left; background:#0f172a; padding:15px; border-radius:10px; border:1px dashed #22c55e; }
-.history-item { background:#334155; padding:10px; border-radius:8px; margin:8px 0; text-align:left; font-size:14px; }
-.btn-lihat { background:#3b82f6; padding:5px 10px; font-size:12px; }
+#header { background: white; padding: 15px; border-radius: 20px; margin-bottom: 12px; border: 4px solid #65a30d; font-size: 22px; text-align: center; box-shadow: 0 4px 0 #4d7c0f; }
+#koin { font-weight: bold; color: #eab308; font-size: 26px; }
+
+.shop { background: white; padding: 15px; border-radius: 20px; margin: 12px 0; border: 4px solid #65a30d; box-shadow: 0 4px 0 #4d7c0f; }
+.shop h3 { margin: 0 0 12px 0; text-align: center; }
+.item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f7fee7; border-radius: 12px; margin: 10px 0; border: 2px solid #d9f99d; }
+.stok { font-weight: bold; color: #65a30d; margin: 0 10px; font-size: 18px; }
+
+.kandang { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; }
+.slot { background: #fefce8; border: 4px dashed #a3a3a3; border-radius: 20px; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 55px; position: relative; cursor: pointer; overflow: hidden; transition: 0.2s; }
+.slot:hover { background: #fffbeb; }
+.slot.makan { animation: matuk 0.25s 4; }
+@keyframes matuk { 0%,100%{transform: translateY(0) scale(1)} 50%{transform: translateY(-12px) scale(1.1)} }
+
+/* SEMUA ANIMASI AYAM */
+.telur-goyang { display: inline-block; animation: goyang 0.6s ease-in-out infinite; }
+@keyframes goyang { 0%,100%{transform: rotate(-5deg);} 50%{transform: rotate(5deg);} }
+
+.ayam-anak { display: inline-block; animation: lari 0.4s ease-in-out infinite alternate; }
+@keyframes lari { 0%{transform: translateX(-4px) rotate(-5deg);} 100%{transform: translateX(4px) rotate(5deg);} }
+
+.ayam-dewasa { display: inline-block; animation: bob 1.2s ease-in-out infinite; position: relative; }
+.ayam-dewasa::after { content: '🪽'; position: absolute; font-size: 22px; right: -8px; top: -8px; animation: kipass 1.5s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform: translateY(0) rotate(-2deg);} 50%{transform: translateY(-10px) rotate(2deg);} }
+@keyframes kipass { 0%,100%{opacity:1; transform: rotate(0);} 50%{opacity:0; transform: rotate(20deg);} }
+
+/* EFEK LAIN */
+.slot.bar { position: absolute; bottom: 6px; left: 6px; right: 6px; height: 10px; background: #ddd; border-radius: 8px; overflow: hidden; border: 1px solid #999; }
+.slot.bar-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); width: 0%; transition: width 0.5s linear; }
+.slot.timer { position: absolute; top: 6px; font-size: 13px; font-weight: bold; background: rgba(0,0,0,0.7); color: white; padding: 3px 8px; border-radius: 8px; }
+
+.jagung-terbang { position: absolute; font-size: 28px; z-index: 99; animation: terbang 0.7s forwards; pointer-events: none; }
+@keyframes terbang { from {transform: scale(1) rotate(0);} to {transform: translate(var(--x), var(--y)) scale(0.3) rotate(360deg); opacity: 0;} }
+
+.partikel { position: absolute; font-size: 16px; animation: pecah 0.9s forwards; pointer-events: none; }
+@keyframes pecah { 0%{opacity:1; transform: scale(1);} 100%{opacity:0; transform: translate(var(--rx), var(--ry)) rotate(720deg) scale(0);} }
+
+button { background: #65a30d; color: white; border: none; padding: 12px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 0 #4d7c0f; font-size: 15px; }
+button:active { transform: translateY(2px); box-shadow: 0 1px 0 #4d7c0f; }
+button:disabled { background: gray; box-shadow: 0 3px 0 #555; }
+
+#notif { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: #22c55e; color: white; padding: 12px 25px; border-radius: 15px; display: none; z-index: 100; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 </style>
 </head>
 <body>
 
-<div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG DI TAP-TAP KENPOP</h2>
-  <input type="text" id="nama" placeholder="Nama Kamu" required>
-  <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
-  <button class="btn-login" onclick="login()">MASUK GAME</button>
-  <button class="btn-admin" onclick="hubungiAdmin()">💬 BUTUH BANTUAN ADMIN?</button>
+<div id="header">
+  💰 KOIN: <span id="koin">500</span>
 </div>
-
-<div class="welcome" id="welcomeBox">
-  <h3>Halo <span id="w-nama"></span>!</h3>
-  <p>WA: <span id="w-wa"></span></p>
-  <button class="btn-logout" onclick="logout()">LOGOUT</button>
-  <button class="btn-reset-admin" onclick="resetAdmin()">🔑 RESET AKUN CHAT ADMIN</button>
-</div>
-
-<div id="stats">Koin: <span id="coins">0</span></div>
-<button id="logo"></button>
-
-<div id="bannerBox">
-<script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
-<script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
-</div>
-
-<script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
 
 <div class="shop">
-  <h2>🛒 SHOP</h2>
+  <h3>🛒 TOKO PETERNAKAN</h3>
   <div class="item">
-    <span>Klik +1<br><small>Total = +<span id="powerNow">1</span></small></span>
-    <button id="btnPower">Validasi 0/3</button>
+    <span>🥚 Telur Ayam</span>
+    <button onclick="beliTelur(100)">BELI 100</button>
   </div>
   <div class="item">
-    <span>Auto Click 1 Jam</span>
-    <button id="btnAuto">Validasi 0/6</button>
+    <span>🌽 Pakan Jagung <span class="stok" id="stok-jagung">x0</span></span>
+    <button onclick="beliPakan('jagung', 50)">BELI 50</button>
   </div>
-  <div class="tukar-group">
-    <button class="tukar" onclick="bukaPopupTukar()">🍗 TUKAR KOIN</button>
-    <button class="tukar-history" onclick="bukaPopupHistory()">📜 HISTORY</button>
-  </div>
-</div>
-
-<div class="ads-bottom-wrap">
-  <div class="ads-bottom-box" id="monetag-kiri">
-    <script async data-cfasync="false" src="//nap5k.com/tag.min.js" data-zone="11790593"></script>
-  </div>
-  <div class="ads-bottom-box">
-    <script type="text/javascript">
-      atOptions = {
-        'key' : '7d972344654b992824d432a8e4fa04ad',
-        'format' : 'iframe',
-        'height' : 300,
-        'width' : 160,
-        'params' : {}
-      };
-    </script>
-    <script type="text/javascript" src="//www.highrevenueformat.com/7d972344654b992824d432a8e4fa04ad/invoke.js"></script>
+  <div class="item">
+    <span>🌽🌽 Jagung Super <span class="stok" id="stok-super">x0</span></span>
+    <button onclick="beliPakan('super', 200)">BELI 200</button>
   </div>
 </div>
 
-<div class="popup" id="popupTukar">
-  <div class="popup-box">
-    <h2>TUKAR KOIN DENGAN</h2>
-    <div class="popup-item"><span>1. KenPoP<br><small>100000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 100000)">TUKAR</button></div>
-    <div class="popup-item"><span>2. Kentang Goreng<br><small>75000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 75000)">TUKAR</button></div>
-    <div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>75000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 75000)">TUKAR</button></div>
-    
-    <button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button>
-  </div>
-</div>
+<h3 style="text-align:center;">🏠 KANDANG</h3>
+<div class="kandang" id="kandang"></div>
 
-<div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
-<div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
+<div id="notif"></div>
 
 <script>
-const ADMIN_WA = "6281234567890";
-const ADMIN_CODE = "kenpop123";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
+let koin = +localStorage.farm_koin || 500;
+let inventory = JSON.parse(localStorage.farm_inv || '{"telur":0,"jagung":0,"super":0}');
+let kandang = JSON.parse(localStorage.farm_kandang || '[]');
 
-let currentWA = "";
-function getKey(key){ return key + '_' + currentWA; }
-
-let historyTukar = [];
-let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
-let powerLockEnd, autoLockEnd;
-let coinsTxt, powerNowTxt, btnPower, btnAuto;
-let autoInterval, powerLockTimer, autoLockTimer, cooldownInterval;
-
-function getCooldownPower(index){
-  if(index === 0) return 15000;
-  if(index === 1) return 20000;
-  return 30000;
-}
-function getCooldownAuto(index){
-  if(index === 0) return 15000;
-  if(index === 1) return 20000;
-  if(index === 2) return 30000;
-  return 15000;
-}
-
-function hubungiAdmin(){
-  let pesan = `Halo Admin KenPOP, saya butuh bantuan.`;
-  let linkWA = `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(pesan)}`;
-  window.open(linkWA, '_blank');
-}
-
-function resetAdmin(){
-  let kode = prompt("Masukkan kode admin:");
-  if(kode === ADMIN_CODE){
-    if(confirm(`YAKIN HAPUS TOTAL DATA AKUN ${localStorage.kenpopWA}?`)){
-      let wa = localStorage.kenpopWA;
-      
-      // HAPUS SEMUA KEY MILIK NOMER INI
-      localStorage.removeItem('kenpopWA');
-      localStorage.removeItem('kenpopNama');
-      localStorage.removeItem('coins_' + wa);
-      localStorage.removeItem('power_' + wa);
-      localStorage.removeItem('auto_' + wa);
-      localStorage.removeItem('pAds_' + wa);
-      localStorage.removeItem('aAds_' + wa);
-      localStorage.removeItem('autoEnd_' + wa);
-      localStorage.removeItem('pTimer_' + wa);
-      localStorage.removeItem('aTimer_' + wa);
-      localStorage.removeItem('lastLogin_' + wa);
-      localStorage.removeItem('historyTukar_' + wa);
-      localStorage.removeItem('powerLockEnd_' + wa);
-      localStorage.removeItem('autoLockEnd_' + wa);
-      
-      alert("✅ DATA TOTAL TERHAPUS! HP sudah bisa daftar ulang dari 0");
-      location.reload();
-    }
-  } else {
-    alert("❌ Kode salah!");
-  }
-}
-
-window.onload = function() {
-  if(localStorage.kenpopNama && localStorage.kenpopWA) {
-    currentWA = localStorage.kenpopWA;
-    historyTukar = JSON.parse(localStorage[getKey('historyTukar')] || "[]");
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('welcomeBox').style.display = 'block';
-    document.getElementById('w-nama').innerText = localStorage.kenpopNama;
-    document.getElementById('w-wa').innerText = currentWA;
-    loadData();
-  }
-
-  document.getElementById('logo').onclick = (e) => {
-    if(!currentWA) return;
-    let totalKlik = power + auto;
-    coins += totalKlik; showPlus('+'+totalKlik, e); save();
-  }
-
-  startCooldownTimer();
-}
-
-async function login() {
-  const nama = document.getElementById('nama').value.trim();
-  const wa = document.getElementById('wa').value.trim();
-  const btn = document.querySelector('.btn-login');
-
-  if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
-  if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
-
-  if(localStorage.kenpopWA){
-    if(localStorage.kenpopWA!== wa){
-      let pesan = `Halo Admin KenPOP, saya mau reset akun.\nHP terkunci ke: ${localStorage.kenpopWA}`;
-      let linkWA = `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(pesan)}`;
-      alert(`❌ HP INI SUDAH TERKUNCI!\n\nAkun terdaftar: ${localStorage.kenpopWA}\n\nHP ini tidak bisa ganti akun. Silahkan hubungi admin untuk reset.`);
-      window.open(linkWA, '_blank');
-      return;
-    }
-  }
-
-  btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.9.1"}) });
-
-  currentWA = wa;
-  localStorage.kenpopNama = nama;
-  localStorage.kenpopWA = wa;
-
-  if(!localStorage[getKey('coins')]){
-    localStorage[getKey('coins')] = 0; localStorage[getKey('power')] = 1; localStorage[getKey('auto')] = 0;
-    localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0; localStorage[getKey('autoEnd')] = 0;
-    localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0; localStorage[getKey('lastLogin')] = "";
-    localStorage[getKey('historyTukar')] = "[]"; localStorage[getKey('powerLockEnd')] = 0; localStorage[getKey('autoLockEnd')] = 0;
-  }
-  historyTukar = JSON.parse(localStorage[getKey('historyTukar')] || "[]");
-
-  document.getElementById('w-nama').innerText = nama;
-  document.getElementById('w-wa').innerText = wa;
-  document.getElementById('loginBox').style.display = 'none';
-  document.getElementById('welcomeBox').style.display = 'block';
-  alert('Login Berhasil! Selamat bermain');
-  loadData();
-  btn.disabled = false; btn.innerText = 'MASUK GAME';
-}
-
-function logout(){
-  if(confirm('Yakin mau logout? \nAkun kamu tetap terkunci di HP ini')){
-    save();
-    clearInterval(autoInterval); clearInterval(powerLockTimer); clearInterval(autoLockTimer); clearInterval(cooldownInterval);
-    localStorage.removeItem('kenpopNama');
-    currentWA = "";
-    location.reload();
-  }
-}
-
-function loadData(){
-  let today = new Date().toISOString().split('T')[0];
-  let lastLogin = localStorage[getKey('lastLogin')] || "";
-  if(lastLogin!== today){
-    localStorage[getKey('power')] = 1; localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0;
-    localStorage[getKey('lastLogin')] = today;
-    localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0;
-    localStorage[getKey('powerLockEnd')] = 0; localStorage[getKey('autoLockEnd')] = 0;
-    if(lastLogin) alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
-  }
-
-  coins = +localStorage[getKey('coins')] || 0;
-  power = +localStorage[getKey('power')] || 1;
-  auto = +localStorage[getKey('auto')] || 0;
-  pAds = +localStorage[getKey('pAds')] || 0;
-  aAds = +localStorage[getKey('aAds')] || 0;
-  autoEnd = +localStorage[getKey('autoEnd')] || 0;
-  pTimer = +localStorage[getKey('pTimer')] || 0;
-  aTimer = +localStorage[getKey('aTimer')] || 0;
-  powerLockEnd = +localStorage[getKey('powerLockEnd')] || 0;
-  autoLockEnd = +localStorage[getKey('autoLockEnd')] || 0;
-
-  coinsTxt = document.getElementById('coins');
-  powerNowTxt = document.getElementById('powerNow');
-  btnPower = document.getElementById('btnPower');
-  btnAuto = document.getElementById('btnAuto');
-
-  if(auto > 0 && Date.now() < autoEnd){
-    startAutoClick();
-  }
-  if(Date.now() < powerLockEnd){
-    lockPowerButton(powerLockEnd - Date.now());
-  }
-  if(Date.now() < autoLockEnd){
-    lockAutoButton(autoLockEnd - Date.now());
-  }
-
-  btnPower.onclick = () => {
-    if(power >= 50) return;
-    let cooldown = getCooldownPower(pAds);
-    if(Date.now() - pTimer < cooldown) return;
-    pAds++; pTimer = Date.now();
-    if(pAds >= 3){
-      if(power < 50) power++;
-      pAds = 0;
-      alert(`Klik +1 Naik! Sekarang Total = +${power}`);
-    }
-    if(pAds >= 2){
-      powerLockEnd = Date.now() + 600000;
-      lockPowerButton(600000);
-    }
-    save();
-  }
-
-  btnAuto.onclick = () => {
-    let cooldown = getCooldownAuto(aAds);
-    if(Date.now() - aTimer < cooldown) return;
-    aAds++; aTimer = Date.now();
-    if(aAds >= 6){
-      auto=power; autoEnd=Date.now()+3600000;
-      autoLockEnd = autoEnd;
-      aAds=0;
-      startAutoClick();
-      lockAutoButton(3600000);
-      alert('Auto Aktif 1 Jam!');
-    }
-    save();
-  }
-
-  save();
-  setInterval(save, 1000);
-}
-
-function startCooldownTimer(){
-  clearInterval(cooldownInterval);
-  cooldownInterval = setInterval(() => {
-    if(!btnPower ||!btnAuto) return;
-    if(Date.now() < powerLockEnd){
-      updatePowerTimer(powerLockEnd - Date.now());
-    } else {
-      cekValidasi('power');
-    }
-    if(Date.now() < autoLockEnd){
-      updateAutoTimer(autoLockEnd - Date.now());
-    } else {
-      cekValidasi('auto');
-    }
-  }, 1000);
-}
-
-function startAutoClick(){
-  clearInterval(autoInterval);
-  autoInterval = setInterval(() => {
-    if(Date.now() > autoEnd){
-      auto = 0; autoLockEnd = 0;
-      clearInterval(autoInterval);
-      save();
-      return;
-    }
-    coins += auto;
-    save();
-  }, 1000);
-}
-
-function lockPowerButton(duration){
-  btnPower.disabled = true;
-  updatePowerTimer(duration);
-  clearInterval(powerLockTimer);
-  powerLockTimer = setInterval(() => {
-    duration = powerLockEnd - Date.now();
-    if(duration <= 0){
-      clearInterval(powerLockTimer);
-      powerLockEnd = 0;
-      pAds = 0;
-      cekValidasi('power');
-      save();
-      return;
-    }
-  }, 1000);
-}
-
-function lockAutoButton(duration){
-  btnAuto.disabled = true;
-  updateAutoTimer(duration);
-  clearInterval(autoLockTimer);
-  autoLockTimer = setInterval(() => {
-    duration = autoLockEnd - Date.now();
-    if(duration <= 0){
-      clearInterval(autoLockTimer);
-      autoLockEnd = 0;
-      cekValidasi('auto');
-      save();
-      return;
-    }
-  }, 1000);
-}
-
-function updatePowerTimer(ms){
-  btnPower.innerText = `🔒 Tunggu ${formatTime(ms)}`;
-}
-
-function updateAutoTimer(ms){
-  btnAuto.innerText = `🔒 ${formatTime(ms)}`;
-}
-
-function cekValidasi(type){
-  let btn = type==='power'? btnPower : btnAuto;
-  let timer = type==='power'? pTimer : aTimer;
-  let ads = type==='power'? pAds : aAds;
-  let cooldown = type==='power'? getCooldownPower(ads) : getCooldownAuto(ads);
-
-  if(type === 'power' && Date.now() < powerLockEnd) return;
-  if(type === 'auto' && Date.now() < autoLockEnd) return;
-
-  if(timer > 0 && Date.now() - timer < cooldown){
-    let sisa = Math.ceil((cooldown - (Date.now() - timer))/1000);
-    btn.disabled = true; btn.innerText = `Tunggu ${sisa}s...`;
-  } else {
-    btn.disabled = false;
-    if(type==='power') btn.innerText = `Validasi ${ads}/3`;
-    if(type==='auto') btn.innerText = `Validasi ${ads}/6`;
-  }
-}
-
-function formatTime(ms) {
-  let totalSec = Math.floor(ms / 1000);
-  let hours = Math.floor(totalSec / 3600);
-  let minutes = Math.floor((totalSec % 3600) / 60);
-  let seconds = totalSec % 60;
-  if(hours > 0) return `${hours}j ${minutes}m ${seconds}d`;
-  return `${minutes}m ${seconds}d`;
-}
-
-function showPlus(txt,e){
-  let d=document.createElement('div'); d.id='float'; d.innerText=txt;
-  d.style.left=e.clientX-20+'px'; d.style.top=e.clientY-20+'px';
-  document.body.appendChild(d); setTimeout(()=>d.remove(),800);
-}
-
-function bukaPopupTukar(){ document.getElementById('popupTukar').style.display='flex'; }
-function bukaPopupHistory(){ renderHistory(); document.getElementById('popupHistory').style.display='flex'; }
-function tutupPopup(id){ document.getElementById(id).style.display='none'; }
-
-function prosesTukar(menu, harga){
-  if(coins < harga){ alert(`Koin kurang! Butuh ${harga.toLocaleString('id')} koin`); return; }
-  coins -= harga;
-  let now = new Date();
-  let tgl = now.toLocaleDateString('id');
-  let jam = now.toLocaleTimeString('id');
-  let dataStruk = { tgl, jam, menu, harga, sisa: coins, nama: localStorage.kenpopNama, wa: currentWA };
-
-  historyTukar.unshift(dataStruk);
-  localStorage[getKey('historyTukar')] = JSON.stringify(historyTukar);
-
-  fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...dataStruk, type:"TUKAR"}) });
-  tampilStruk(dataStruk);
-  tutupPopup('popupTukar');
-  save();
-}
-
-function tampilStruk(d){
-  document.getElementById('isiStruk').innerHTML = `<b>BERLAKU HARI INI: ${d.tgl}</b><br><br>Tanggal: ${d.tgl}<br>Jam: ${d.jam}<br><br>Nama: ${d.nama}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} Koin<br>Sisa Koin: ${d.sisa.toLocaleString('id')}<br><br><b>Silahkan SS dan tunjukkan ke Kasir</b>`;
-  document.getElementById('popupStruk').style.display='flex';
-}
-
-// FIX V24.9.1 - ANTI STUCK
-function renderHistory(){
-  let box = document.getElementById('isiHistory');
-  if(historyTukar.length === 0){ 
-    box.innerHTML = "<p>Belum ada riwayat penukaran</p>"; 
-    return; 
-  }
-  
-  box.innerHTML = "";
-  historyTukar.forEach((d) => {
-    let item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `${d.tgl} ${d.jam}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} koin<br>`;
-    
-    let btn = document.createElement('button');
-    btn.className = 'btn-lihat';
-    btn.innerText = 'LIHAT STRUK';
-    btn.onclick = () => tampilStruk(d);
-    
-    item.appendChild(btn);
-    box.appendChild(item);
-  });
-}
+const WAKTU_TETAS = 10000; // 10 detik
+const WAKTU_DEWASA = 30000; // 30 detik
 
 function save(){
-  if(!currentWA) return;
-  let now = Date.now();
-  if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; autoLockEnd = 0; clearInterval(autoInterval); }
-
-  localStorage[getKey('coins')]=coins; localStorage[getKey('power')]=power; localStorage[getKey('auto')]=auto;
-  localStorage[getKey('pAds')]=pAds; localStorage[getKey('aAds')]=aAds; localStorage[getKey('autoEnd')]=autoEnd;
-  localStorage[getKey('pTimer')]=pTimer; localStorage[getKey('aTimer')]=aTimer;
-  localStorage[getKey('powerLockEnd')]=powerLockEnd;
-  localStorage[getKey('autoLockEnd')]=autoLockEnd;
-
-  coinsTxt.innerText=coins.toLocaleString('id');
-  powerNowTxt.innerText = power;
-  if(btnPower.disabled === false) cekValidasi('power');
-  if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
-
-  if(btnAuto.disabled === false) cekValidasi('auto');
+  localStorage.farm_koin = koin;
+  localStorage.farm_inv = JSON.stringify(inventory);
+  localStorage.farm_kandang = JSON.stringify(kandang);
+  document.getElementById('koin').innerText = koin.toLocaleString('id');
+  document.getElementById('stok-jagung').innerText = 'x' + inventory.jagung;
+  document.getElementById('stok-super').innerText = 'x' + inventory.super;
+  renderKandang();
 }
+
+function beliTelur(harga){
+  if(koin < harga) return showNotif('❌ Koin kurang!');
+  koin -= harga; inventory.telur++;
+  showNotif('🥚 Telur dibeli!');
+  let slotKosong = kandang.findIndex(s =>!s);
+  if(slotKosong!== -1) taruhTelur(slotKosong);
+  save();
+}
+
+function beliPakan(jenis, harga){
+  if(koin < harga) return showNotif('❌ Koin kurang!');
+  koin -= harga; inventory[jenis]++;
+  showNotif(`🌽 Pakan ${jenis} dibeli!`);
+  save();
+}
+
+function taruhTelur(index){
+  if(inventory.telur <= 0) return;
+  inventory.telur--;
+  kandang[index] = { stage: 'telur', start: Date.now(), boost: 1 };
+}
+
+function beriPakan(index, e){
+  if(!kandang[index] || kandang[index].stage!== 'anak') return;
+
+  let jenis = inventory.super > 0? 'super' : inventory.jagung > 0? 'jagung' : null;
+  if(!jenis) return showNotif('❌ Pakan Habis! Beli di Toko');
+
+  inventory[jenis]--;
+  kandang[index].boost = jenis === 'super'? 3 : 1;
+  kandang[index].start = Date.now(); // reset timer biar kerasa cepet
+
+  animasiKasihPakan(e, index, jenis);
+  showNotif(jenis === 'super'? '✨ Yummy Super! 3x Cepat' : '😋 Nyam Nyam!');
+  save();
+}
+
+function animasiKasihPakan(e, index){
+  let slot = document.querySelectorAll('.slot')[index];
+  slot.classList.add('makan');
+  setTimeout(()=>slot.classList.remove('makan'), 1200);
+
+  // Animasi jagung terbang
+  let jagung = document.createElement('div');
+  jagung.className = 'jagung-terbang';
+  jagung.innerText = '🌽';
+  jagung.style.left = '85%'; jagung.style.top = '20%';
+  jagung.style.setProperty('--x', e.clientX - slot.getBoundingClientRect().left - 30 + 'px');
+  jagung.style.setProperty('--y', e.clientY - slot.getBoundingClientRect().top - 30 + 'px');
+  slot.appendChild(jagung);
+  setTimeout(()=>jagung.remove(), 700);
+
+  // Partikel acak
+  for(let i=0; i<6; i++){
+    let p = document.createElement('div');
+    p.className = 'partikel'; p.innerText = '✨';
+    p.style.left = '50%'; p.style.top = '50%';
+    p.style.setProperty('--rx', (Math.random()-0.5)*60 + 'px');
+    p.style.setProperty('--ry', (Math.random()-0.5)*60 + 'px');
+    slot.appendChild(p);
+    setTimeout(()=>p.remove(), 900);
+  }
+}
+
+function jualAyam(index){
+  if(!kandang[index] || kandang[index].stage!== 'dewasa') return;
+  let bonus = kandang[index].boost === 3? 500 : 200;
+  koin += bonus; kandang[index] = null;
+  showNotif(`💰 Ayam dijual +${bonus} koin!`);
+  save();
+}
+
+function renderKandang(){
+  let wrap = document.getElementById('kandang');
+  wrap.innerHTML = '';
+  for(let i=0; i<9; i++){
+    let slot = document.createElement('div');
+    slot.className = 'slot';
+    let data = kandang[i];
+
+    if(!data) {
+      slot.innerText = '+';
+      slot.onclick = () => taruhTelur(i);
+    } else {
+      let now = Date.now();
+      let elapsed = now - data.start;
+
+      // Update stage
+      if(data.stage === 'telur' && elapsed > WAKTU_TETAS){
+        data.stage = 'anak';
+        data.start = now;
+        showNotif('🐤 Telur menetas!');
+      } else if(data.stage === 'anak' && elapsed > WAKTU_DEWASA / data.boost){
+        data.stage = 'dewasa';
+        showNotif('🐔 Ayam Dewasa! Siap jual');
+      }
+
+      // Tentukan emoji + class animasi
+      let emoji = data.stage === 'telur'? '🥚' : data.stage === 'anak'? '🐤' : '🐔';
+      let classAyam = data.stage === 'telur'? 'telur-goyang' : data.stage === 'anak'? 'ayam-anak' : 'ayam-dewasa';
+
+      slot.innerHTML = `<span class="${classAyam}">${emoji}</span>`;
+      slot.onclick = (e) => data.stage === 'anak'? beriPakan(i, e) : data.stage === 'dewasa'? jualAyam(i) : {};
+
+      // Progress bar
+      if(data.stage!== 'dewasa'){
+        let total = data.stage === 'telur'? WAKTU_TETAS : WAKTU_DEWASA / data.boost;
+        let pct = Math.min(100, elapsed / total * 100);
+        slot.innerHTML += `<div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>`;
+        slot.innerHTML += `<div class="timer">${Math.ceil((total-elapsed)/1000)}s</div>`;
+      }
+    }
+    wrap.appendChild(slot);
+  }
+}
+
+function showNotif(teks){
+  let n = document.getElementById('notif');
+  n.innerText = teks; n.style.display = 'block';
+  setTimeout(()=> n.style.display = 'none', 1800);
+}
+
+// Auto save tiap 1 detik
+setInterval(save, 1000);
+kandang = Array(9).fill(null).concat(kandang).slice(0,9);
+save();
 </script>
 </body>
 </html>
