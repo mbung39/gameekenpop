@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V22.7</title>
+<title>KenPOP Tap V22.9</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V22.7</h2>
+  <h2>👋 SELAMAT DATANG V22.9</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -85,7 +85,7 @@
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
-const ADSTERRA_URL = "https://pl31315068.profitableratecpmnetwork.com/32/31/9b/32319b7e5c5aa6b36baf37c9b49b6460.js";
+const ADSTERRA_DIRECT = "https://pl31315068.profitableratecpmnetwork.com/32/31/9b/32319b7e5c5aa6b36baf37c9b49b6460"; // DIRECT LINK LU
 
 let currentWA = "";
 function getKey(key){ return key + '_' + currentWA; }
@@ -95,9 +95,9 @@ let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 
 function getCooldownPower(index){
-  if(index === 0) return 15000;
-  if(index === 1) return 20000;
-  return 30000;
+  if(index === 0) return 15000; // 15s
+  if(index === 1) return 20000; // 20s
+  return 30000; // 30s
 }
 function getCooldownAuto(index){
   if(index === 0) return 15000;
@@ -138,7 +138,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V22.7"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V22.9"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -195,14 +195,11 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // FIX UTAMA: PANGGIL IKLAN LANGSUNG SAAT KLIK
   btnPower.onclick = () => {
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
-
-    showAd(); // IKLAN TEMBAK DISINI PAS KLIK
-
+    showAd(); // IKLAN MUNCUL DISINI
     pAds++;
     pTimer = Date.now();
     if(pAds >= 3){
@@ -216,9 +213,7 @@ function loadData(){
   btnAuto.onclick = () => {
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
-
-    showAd(); // IKLAN TEMBAK DISINI PAS KLIK
-
+    showAd(); // IKLAN MUNCUL DISINI
     aAds++;
     aTimer = Date.now();
     if(aAds >= 6){
@@ -230,12 +225,12 @@ function loadData(){
   }
 
   save();
-  setInterval(save, 1000);
+  setInterval(save, 1000); // UPDATE TIMER TIAP DETIK
 }
 
 function showAd() {
-  // FIX PALING AMPUH: BUKA POPUNDER LANGSUNG
-  window.open(ADSTERRA_URL, '_blank');
+  // FIX PALING AMPUH BUAT ADSTERRA BARU
+  window.open(ADSTERRA_DIRECT, '_blank');
 }
 
 function cekValidasi(type){
