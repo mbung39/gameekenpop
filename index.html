@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.3 1HP1AKUN</title>
+<title>KenPOP Tap V24.4 LOCK PERMANEN</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -27,7 +27,7 @@
 .btn-login { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
 .welcome { display:none; background:#334155; padding:15px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
 .btn-logout{ width:100%; padding:12px; background: linear-gradient(45deg, #e74c3c, #c0392b); color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px; }
-.btn-logout:hover{ background: linear-gradient(45deg, #c039b, #a93226); }
+.btn-logout:hover{ background: linear-gradient(45deg, #c0392b, #a93226); }
 .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center; }
 .popup-box { background:#1e293b; padding:20px; border-radius:15px; width:90%; max-width:400px; border:2px solid gold; }
 .popup-item { background:#334155; padding:12px; border-radius:10px; margin:10px 0; display:flex; justify-content:space-between; align-items:center; }
@@ -41,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V24.3</h2>
+  <h2>👋 SELAMAT DATANG V24.4</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -136,18 +136,21 @@ async function login() {
   if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
   if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
 
-  // VALIDASI 1 HP 1 AKUN - KUNCI PERMANEN
-  if(localStorage.kenpopWA && localStorage.kenpopWA!== wa){
-    alert('⚠️ HP INI SUDAH TERDAFTAR!\n\nAkun aktif: ' + localStorage.kenpopWA + '\n\n1 HP hanya untuk 1 akun. Logout dulu untuk ganti akun.');
-    return; // LANGSUNG TOLAK, GA BISA LANJUT
+  // LOCK PERMANEN 1 HP 1 AKUN
+  if(localStorage.kenpopWA){
+    if(localStorage.kenpopWA!== wa){
+      alert('❌ HP INI SUDAH TERKUNCI!\n\nAkun terdaftar: ' + localStorage.kenpopWA + '\n\nHP ini tidak bisa ganti akun. Hubungi admin jika perlu reset.');
+      return;
+    }
+    // kalau WA sama, lanjut login biasa
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.3"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.4"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
-  localStorage.kenpopWA = wa; // DIKUNCI DI SINI
+  localStorage.kenpopWA = wa; // DIKUNCI PERMANEN
 
   if(!localStorage[getKey('coins')]){
     localStorage[getKey('coins')] = 0; localStorage[getKey('power')] = 1; localStorage[getKey('auto')] = 0;
@@ -167,11 +170,11 @@ async function login() {
 }
 
 function logout(){
-  if(confirm('Yakin mau logout? \nData koin & power kamu tetap aman di HP ini')){
+  if(confirm('Yakin mau logout? \nAkun kamu tetap terkunci di HP ini')){
     save();
     clearInterval(autoInterval); clearInterval(powerLockTimer); clearInterval(autoLockTimer); clearInterval(cooldownInterval);
     localStorage.removeItem('kenpopNama');
-    localStorage.removeItem('kenpopWA'); // HAPUS KUNCI SAAT LOGOUT
+    // JANGAN HAPUS kenpopWA BIAR TETEP TERKUNCI
     currentWA = "";
     location.reload();
   }
