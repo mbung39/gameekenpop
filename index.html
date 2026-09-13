@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V25.0 Trivia</title>
+<title>KenPOP Tap V25.1 Interstitial</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -43,13 +43,15 @@
 .history-item { background:#334155; padding:10px; border-radius:8px; margin:8px 0; text-align:left; font-size:14px; }
 .btn-lihat { background:#3b82f6; padding:5px 10px; font-size:12px; }
 
-/* ============== CSS TRIVIA BARU ============== */
-.popup-trivia { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; justify-content:center; align-items:center; }
-.trivia-box { background:linear-gradient(45deg, #f59e0b, #ef4444); padding:25px; border-radius:20px; width:90%; max-width:400px; border:3px solid gold; text-align:center; }
-.trivia-box h1 { font-size:32px; color:white; margin:0; text-shadow:2px 2px 4px #000; }
-.trivia-box h2 { font-size:20px; color:#fffbeb; margin:15px 0; line-height:1.4; }
-.trivia-box p { font-size:14px; color:#fde047; }
-.btn-lanjut { background:white; color:#ef4444; padding:12px 20px; border-radius:10px; font-weight:bold; margin-top:15px; width:100%; }
+/* ============== CSS TRIVIA INTERSTITIAL BARU ============== */
+.popup-trivia { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; }
+.trivia-box { background:linear-gradient(45deg, #f59e0b, #ef4444); padding:20px; border-radius:20px; width:95%; max-width:340px; border:3px solid gold; text-align:center; position:relative; }
+.btn-close-x { position:absolute; top:8px; right:8px; background:white; color:#ef4444; border:none; width:30px; height:30px; border-radius:50%; font-size:18px; font-weight:bold; display:none; cursor:pointer; }
+.trivia-box h1 { font-size:28px; color:white; margin:0 0 10px 0; text-shadow:2px 2px 4px #000; }
+.trivia-box h2 { font-size:18px; color:#fffbeb; margin:10px 0; line-height:1.4; min-height:50px; }
+#triviaTimer { font-size:16px; color:#fde047; font-weight:bold; margin:10px 0; }
+#triviaCounter { font-size:12px; color:white; }
+.ads-300x250 { margin:10px auto; width:300px; height:250px; background:#000; display:flex; align-items:center; justify-content:center; border-radius:10px; overflow:hidden; }
 </style>
 </head>
 <body>
@@ -119,7 +121,6 @@
     <div class="popup-item"><span>1. KenPoP<br><small>100000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 100000)">TUKAR</button></div>
     <div class="popup-item"><span>2. Kentang Goreng<br><small>75000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 75000)">TUKAR</button></div>
     <div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>75000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 75000)">TUKAR</button></div>
-
     <button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button>
   </div>
 </div>
@@ -127,18 +128,19 @@
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
-<!-- ============== POPUP TRIVIA BARU ============== -->
+<!-- ============== POPUP TRIVIA INTERSTITIAL ============== -->
 <div class="popup-trivia" id="popupTrivia">
   <div class="trivia-box">
+    <button class="btn-close-x" id="btnCloseX" onclick="tutupTrivia()">X</button>
     <h1>TAHU? KAMU TAHU?</h1>
     <h2 id="triviaText">Loading...</h2>
-    <p id="triviaCounter">Trivia 1/50</p>
-    <!-- SLOT IKLAN TRIVIA -->
-    <div style="margin:15px 0; background:#000; min-height:50px; display:flex; align-items:center; justify-content:center;">
-      <script type="text/javascript">atOptions = { 'key' : 'MONETAG_TRIVIA_KEY', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
-      <script type="text/javascript" src="//www.highrevenueformat.com/MONETAG_TRIVIA_KEY/invoke.js"></script>
+    <div class="ads-300x250" id="adsTriviaBox">
+        <!-- GANTI KEY INI PAKE PUNYA LU BREE -->
+        <script type="text/javascript">atOptions = { 'key' : 'GANTI_KEY_300X250_1', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+        <script type="text/javascript" src="//www.highrevenueformat.com/GANTI_KEY_300X250_1/invoke.js"></script>
     </div>
-    <button class="btn-lanjut" onclick="tutupTrivia()">LANJUT MAIN</button>
+    <p id="triviaTimer">Tunggu sebentar 5...</p>
+    <p id="triviaCounter">Trivia 1/50</p>
   </div>
 </div>
 
@@ -156,9 +158,10 @@ let powerLockEnd, autoLockEnd;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 let autoInterval, powerLockTimer, autoLockTimer, cooldownInterval;
 
-// ============== VAR TRIVIA BARU ==============
+// ============== VAR TRIVIA BARU 200x ==============
 let tapCounter = 0;
 let triviaIndex = 0;
+let timerInterval;
 const daftarTrivia = [
   "Tahukah kamu? Madu tidak pernah basi. Madu 3000 tahun masih bisa dimakan!",
   "Gol 'Tangan Tuhan' Diego Maradona terjadi di Piala Dunia 1986",
@@ -263,9 +266,9 @@ window.onload = function() {
     let totalKlik = power + auto;
     coins += totalKlik; showPlus('+'+totalKlik, e);
 
-    // ============== TRIVIA 50x KLIK ==============
+    // ============== TRIVIA 200x KLIK ==============
     tapCounter++;
-    if(tapCounter >= 50){
+    if(tapCounter >= 200){
       showTrivia();
       tapCounter = 0;
     }
@@ -295,7 +298,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V25.0"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V25.1"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -381,15 +384,33 @@ function loadData(){
   setInterval(save, 1000);
 }
 
-// ============== FUNGSI TRIVIA BARU ==============
+// ============== FUNGSI TRIVIA INTERSTITIAL BARU ==============
 function showTrivia(){
   document.getElementById('triviaText').innerText = daftarTrivia[triviaIndex];
   document.getElementById('triviaCounter').innerText = `Trivia ${triviaIndex+1}/${daftarTrivia.length}`;
   document.getElementById('popupTrivia').style.display = 'flex';
+  document.getElementById('btnCloseX').style.display = 'none'; // Sembunyiin dulu
+
+  let countdown = 5;
+  document.getElementById('triviaTimer').innerText = `Tunggu sebentar ${countdown}...`;
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    countdown--;
+    if(countdown > 0){
+      document.getElementById('triviaTimer').innerText = `Tunggu sebentar ${countdown}...`;
+    } else {
+      clearInterval(timerInterval);
+      document.getElementById('triviaTimer').innerText = "";
+      document.getElementById('btnCloseX').style.display = 'block'; // Munculin X
+    }
+  }, 1000);
+
   triviaIndex = (triviaIndex + 1) % daftarTrivia.length;
 }
 
 function tutupTrivia(){
+  clearInterval(timerInterval);
   document.getElementById('popupTrivia').style.display = 'none';
 }
 
@@ -489,7 +510,6 @@ function tampilStruk(d){
   document.getElementById('popupStruk').style.display='flex';
 }
 
-// FIX V24.9.1 - ANTI STUCK
 function renderHistory(){
   let box = document.getElementById('isiHistory');
   if(historyTukar.length === 0){ box.innerHTML = "<p>Belum ada riwayat penukaran</p>"; return; }
