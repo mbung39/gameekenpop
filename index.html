@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V23.1 SocialBar</title>
+<title>KenPOP Tap V23.4 SocialBar</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
-  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; }
+  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 120px; } /* padding bawah gede buat social bar */
   #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V23.1</h2>
+  <h2>👋 SELAMAT DATANG V23.4</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -77,6 +77,9 @@
 <script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
 <script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
 </div>
+
+<!-- SOCIAL BAR TARUH DISINI. BIARIN AJA -->
+<script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
 
 <div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
@@ -137,7 +140,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.1"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.4"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -198,45 +201,31 @@ function loadData(){
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
-    showAd();
-    pAds++;
-    pTimer = Date.now();
+    pAds++; pTimer = Date.now(); // NAIKIN DULU
     if(pAds >= 3){
       if(power < 50) power++;
       pAds = 0;
       alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
     save();
+    location.reload(); // KUNCI: RELOAD BIAR SOCIAL BAR MUNCUL LAGI
   }
 
   btnAuto.onclick = () => {
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
-    showAd();
-    aAds++;
-    aTimer = Date.now();
+    aAds++; aTimer = Date.now(); // NAIKIN DULU
     if(aAds >= 6){
       auto=power; autoEnd=Date.now()+3600000;
       aAds=0;
       alert('Auto Aktif 1 Jam!');
     }
     save();
+    location.reload(); // KUNCI: RELOAD BIAR SOCIAL BAR MUNCUL LAGI
   }
 
   save();
   setInterval(save, 1000);
-}
-
-function showAd() {
-  // FIX V23.1: PAKAI IFRAME BIAR SOCIAL BAR MUNCUL TIAP KLIK
-  const iframe = document.createElement('iframe');
-  iframe.src = 'https://pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js';
-  iframe.style.width = '0px';
-  iframe.style.height = '0px';
-  iframe.style.border = '0px';
-  iframe.style.position = 'absolute';
-  document.body.appendChild(iframe);
-  setTimeout(() => iframe.remove(), 4000);
 }
 
 function cekValidasi(type){
