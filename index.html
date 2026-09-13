@@ -448,7 +448,21 @@ function tampilStruk(d){
 function renderHistory(){
   let box = document.getElementById('isiHistory');
   if(historyTukar.length === 0){ box.innerHTML = "<p>Belum ada riwayat</p>"; return; }
-  box.innerHTML = historyTukar.map((d) => `<div class="history-item">${d.tgl} ${d.jam}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} koin<br><button class="btn-lihat" onclick='tampilStruk(${JSON.stringify(d).replace(/'/g, "&apos;")})'>LIHAT STRUK</button></div>`).join('');
+  
+  box.innerHTML = "";
+  historyTukar.forEach((d, index) => {
+    let item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML = `${d.tgl} ${d.jam}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} koin<br>`;
+    
+    let btn = document.createElement('button');
+    btn.className = 'btn-lihat';
+    btn.innerText = 'LIHAT STRUK';
+    btn.onclick = () => tampilStruk(d); // UDAH GA PAKE PETIK2 LAGI
+    
+    item.appendChild(btn);
+    box.appendChild(item);
+  });
 }
 
 function save(){
