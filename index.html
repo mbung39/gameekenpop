@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.2 CooldownFix</title>
+<title>KenPOP Tap V24.3 1HP1AKUN</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -27,7 +27,7 @@
 .btn-login { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
 .welcome { display:none; background:#334155; padding:15px; border-radius:10px; margin: 15px 0; border:1px dashed #00ff88; }
 .btn-logout{ width:100%; padding:12px; background: linear-gradient(45deg, #e74c3c, #c0392b); color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px; }
-.btn-logout:hover{ background: linear-gradient(45deg, #c0392b, #a93226); }
+.btn-logout:hover{ background: linear-gradient(45deg, #c039b, #a93226); }
 .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center; }
 .popup-box { background:#1e293b; padding:20px; border-radius:15px; width:90%; max-width:400px; border:2px solid gold; }
 .popup-item { background:#334155; padding:12px; border-radius:10px; margin:10px 0; display:flex; justify-content:space-between; align-items:center; }
@@ -41,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V24.2</h2>
+  <h2>👋 SELAMAT DATANG V24.3</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -94,7 +94,7 @@ let historyTukar = [];
 let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
 let powerLockEnd, autoLockEnd;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
-let autoInterval, powerLockTimer, autoLockTimer, cooldownInterval; // TAMBAH 1 INI AJA
+let autoInterval, powerLockTimer, autoLockTimer, cooldownInterval;
 
 function getCooldownPower(index){
   if(index === 0) return 15000;
@@ -125,7 +125,7 @@ window.onload = function() {
     coins += totalKlik; showPlus('+'+totalKlik, e); save();
   }
 
-  startCooldownTimer(); // TAMBAH 1 BARIS INI AJA
+  startCooldownTimer();
 }
 
 async function login() {
@@ -136,17 +136,18 @@ async function login() {
   if(!nama ||!wa) { alert('Nama dan WA wajib diisi!'); return; }
   if(!wa.startsWith('08')) { alert('No WA harus diawali 08'); return; }
 
+  // VALIDASI 1 HP 1 AKUN - KUNCI PERMANEN
   if(localStorage.kenpopWA && localStorage.kenpopWA!== wa){
-    alert('1 HP hanya untuk 1 akun! \nAkun aktif: ' + localStorage.kenpopWA);
-    return;
+    alert('⚠️ HP INI SUDAH TERDAFTAR!\n\nAkun aktif: ' + localStorage.kenpopWA + '\n\n1 HP hanya untuk 1 akun. Logout dulu untuk ganti akun.');
+    return; // LANGSUNG TOLAK, GA BISA LANJUT
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.2"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.3"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
-  localStorage.kenpopWA = wa;
+  localStorage.kenpopWA = wa; // DIKUNCI DI SINI
 
   if(!localStorage[getKey('coins')]){
     localStorage[getKey('coins')] = 0; localStorage[getKey('power')] = 1; localStorage[getKey('auto')] = 0;
@@ -168,9 +169,9 @@ async function login() {
 function logout(){
   if(confirm('Yakin mau logout? \nData koin & power kamu tetap aman di HP ini')){
     save();
-    clearInterval(autoInterval); clearInterval(powerLockTimer); clearInterval(autoLockTimer); clearInterval(cooldownInterval); // TAMBAH clearInterval 1 INI
+    clearInterval(autoInterval); clearInterval(powerLockTimer); clearInterval(autoLockTimer); clearInterval(cooldownInterval);
     localStorage.removeItem('kenpopNama');
-    localStorage.removeItem('kenpopWA');
+    localStorage.removeItem('kenpopWA'); // HAPUS KUNCI SAAT LOGOUT
     currentWA = "";
     location.reload();
   }
@@ -249,7 +250,6 @@ function loadData(){
   setInterval(save, 1000);
 }
 
-// FUNGSI BARU 15 BARIS DOANG
 function startCooldownTimer(){
   clearInterval(cooldownInterval);
   cooldownInterval = setInterval(() => {
