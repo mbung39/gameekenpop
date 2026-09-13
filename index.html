@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V23.7 Adsterra</title>
+<title>KenPOP Tap V23.9 Timer</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
-  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 120px; } /* padding bawah buat social bar */
+  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 120px; }
   #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
@@ -41,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V23.7</h2>
+  <h2>👋 SELAMAT DATANG V23.9</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -77,7 +77,7 @@
 <script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
 </div>
 
-<!-- ADSTERRA SOCIAL BAR - TARUH DISINI -->
+<!-- ADSTERRA SOCIAL BAR -->
 <script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
 
 <div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
@@ -93,7 +93,7 @@ function getKey(key){ return key + '_' + currentWA; }
 let historyTukar = [];
 let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
-let autoInterval;
+let autoInterval, powerLockTimer, autoLockTimer;
 
 function getCooldownPower(index){
   if(index === 0) return 15000;
@@ -139,7 +139,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.7"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.9"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -165,7 +165,7 @@ async function login() {
 function logout(){
   if(confirm('Yakin mau logout? \nData koin & power kamu tetap aman di HP ini')){
     save();
-    clearInterval(autoInterval);
+    clearInterval(autoInterval); clearInterval(powerLockTimer); clearInterval(autoLockTimer);
     localStorage.removeItem('kenpopNama');
     localStorage.removeItem('kenpopWA');
     currentWA = "";
@@ -197,7 +197,7 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // JALANKAN AUTO LAGI ABIS RELOAD
+  // CEK AUTO MASIH JALAN APA GK
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
   }
@@ -212,8 +212,12 @@ function loadData(){
       pAds = 0;
       alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
+    // KUNCI 10 MENIT KALO UDAH 2/3
+    if(pAds >= 2){
+      lockPowerButton(600000); // 10 menit
+    }
     save();
-    location.reload(); // RELOAD BIAR SOCIAL BAR MUNCUL
+    location.reload();
   }
 
   btnAuto.onclick = () => {
@@ -224,10 +228,11 @@ function loadData(){
       auto=power; autoEnd=Date.now()+3600000;
       aAds=0;
       startAutoClick();
+      lockAutoButton(3600000); // KUNCI 1 JAM
       alert('Auto Aktif 1 Jam!');
     }
     save();
-    location.reload(); // RELOAD BIAR SOCIAL BAR MUNCUL
+    location.reload();
   }
 
   save();
@@ -248,11 +253,53 @@ function startAutoClick(){
   }, 1000);
 }
 
+function lockPowerButton(duration){
+  btnPower.disabled = true;
+  updatePowerTimer(duration);
+  clearInterval(powerLockTimer);
+  powerLockTimer = setInterval(() => {
+    duration -= 1000;
+    if(duration <= 0){
+      clearInterval(powerLockTimer);
+      pAds = 0; // RESET KE 0/3
+      cekValidasi('power');
+      return;
+    }
+    updatePowerTimer(duration);
+  }, 1000);
+}
+
+function lockAutoButton(duration){
+  btnAuto.disabled = true;
+  updateAutoTimer(duration);
+  clearInterval(autoLockTimer);
+  autoLockTimer = setInterval(() => {
+    duration -= 1000;
+    if(duration <= 0){
+      clearInterval(autoLockTimer);
+      cekValidasi('auto');
+      return;
+    }
+    updateAutoTimer(duration);
+  }, 1000);
+}
+
+function updatePowerTimer(ms){
+  btnPower.innerText = `🔒 Tunggu ${formatTime(ms)}`;
+}
+
+function updateAutoTimer(ms){
+  btnAuto.innerText = `🔒 ${formatTime(ms)}`;
+}
+
 function cekValidasi(type){
   let btn = type==='power'? btnPower : btnAuto;
   let timer = type==='power'? pTimer : aTimer;
   let ads = type==='power'? pAds : aAds;
   let cooldown = type==='power'? getCooldownPower(ads) : getCooldownAuto(ads);
+
+  if(type === 'power' && pAds >= 2) return; // UDAH DIHANDLE LOCK 10 MENIT
+  if(type === 'auto' && Date.now() < autoEnd) return; // UDAH DIHANDLE LOCK 1 JAM
 
   if(timer > 0 && Date.now() - timer < cooldown){
     let sisa = Math.ceil((cooldown - (Date.now() - timer))/1000);
@@ -269,7 +316,8 @@ function formatTime(ms) {
   let hours = Math.floor(totalSec / 3600);
   let minutes = Math.floor((totalSec % 3600) / 60);
   let seconds = totalSec % 60;
-  return `${hours}j ${minutes}m ${seconds}d`;
+  if(hours > 0) return `${hours}j ${minutes}m ${seconds}d`;
+  return `${minutes}m ${seconds}d`;
 }
 
 function showPlus(txt,e){
@@ -321,14 +369,10 @@ function save(){
 
   coinsTxt.innerText=coins.toLocaleString('id');
   powerNowTxt.innerText = power;
-  cekValidasi('power');
+  if(btnPower.disabled === false) cekValidasi('power');
   if(power >= 50){ btnPower.innerText = "✅ MAX 50"; btnPower.disabled = true; }
 
-  cekValidasi('auto');
-  if(now < autoEnd && auto > 0){
-    let sisa = autoEnd - now;
-    btnAuto.innerText = `⏰ ${formatTime(sisa)}`;
-  }
+  if(btnAuto.disabled === false) cekValidasi('auto');
 }
 </script>
 </body>
