@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.7 AdsOnTop</title>
+<title>KenPOP Tap V24.8 AdsOnTop+Bottom</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -22,6 +22,11 @@
   #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
   #bannerBox { width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0; }
+  
+/* TAMBAHAN BUAT 2 IKLAN BAWAH */
+.ads-bottom-wrap { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
+.ads-bottom-box { width: 160px; height: 300px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+
 .login-box { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid #00ff88; }
 .login-box input { width:100%; padding:12px; background:#334155; border:1px solid #475569; border-radius:8px; color:white; font-size:16px; margin-bottom:10px; }
 .btn-login { width:100%; padding:15px; background: #00ff88; color:#000; border:none; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; }
@@ -43,7 +48,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V24.7</h2>
+  <h2>👋 SELAMAT DATANG V24.8</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -60,7 +65,7 @@
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
 
-<!-- IKLAN PINDAH KE SINI BREE DIATAS SHOP -->
+<!-- IKLAN ATAS 320x50 -->
 <div id="bannerBox">
 <script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
 <script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
@@ -82,6 +87,35 @@
   <div class="tukar-group">
     <button class="tukar" onclick="bukaPopupTukar()">🍗 TUKAR KOIN</button>
     <button class="tukar-history" onclick="bukaPopupHistory()">📜 HISTORY</button>
+  </div>
+</div>
+
+<!-- IKLAN BAWAH 2 KOLOM 160x300 -->
+<div class="ads-bottom-wrap">
+  <div class="ads-bottom-box">
+    <script>
+      atOptions = {
+        'key' : '7d972344654b992824d432a8e4fa04ad', // KEY KIRI
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highrevenueformat.com/7d972344654b992824d432a8e4fa04ad/invoke.js"></script>
+  </div>
+  
+  <div class="ads-bottom-box">
+    <script>
+      atOptions = {
+        'key' : 'GANTI_DENGAN_KEY_BARU_KANAN', // KEY KANAN MINTA BARU DI ADSTERRA
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highrevenueformat.com/GANTI_DENGAN_KEY_BARU_KANAN/invoke.js"></script>
   </div>
 </div>
 
@@ -176,7 +210,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.7"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.8"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
