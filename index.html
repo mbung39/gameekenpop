@@ -156,12 +156,26 @@ function hubungiAdmin(){
 function resetAdmin(){
   let kode = prompt("Masukkan kode admin:");
   if(kode === ADMIN_CODE){
-    if(confirm(`Yakin reset akun ${localStorage.kenpopWA} di HP ini?`)){
+    if(confirm(`YAKIN HAPUS TOTAL DATA AKUN ${localStorage.kenpopWA}?`)){
+      let wa = localStorage.kenpopWA;
+      
+      // HAPUS SEMUA KEY MILIK NOMER INI
       localStorage.removeItem('kenpopWA');
       localStorage.removeItem('kenpopNama');
-      localStorage.removeItem(getKey('coins'));
-      localStorage.removeItem(getKey('power'));
-      alert("✅ Reset berhasil! HP sudah bisa daftar ulang");
+      localStorage.removeItem('coins_' + wa);
+      localStorage.removeItem('power_' + wa);
+      localStorage.removeItem('auto_' + wa);
+      localStorage.removeItem('pAds_' + wa);
+      localStorage.removeItem('aAds_' + wa);
+      localStorage.removeItem('autoEnd_' + wa);
+      localStorage.removeItem('pTimer_' + wa);
+      localStorage.removeItem('aTimer_' + wa);
+      localStorage.removeItem('lastLogin_' + wa);
+      localStorage.removeItem('historyTukar_' + wa);
+      localStorage.removeItem('powerLockEnd_' + wa);
+      localStorage.removeItem('autoLockEnd_' + wa);
+      
+      alert("✅ DATA TOTAL TERHAPUS! HP sudah bisa daftar ulang dari 0");
       location.reload();
     }
   } else {
