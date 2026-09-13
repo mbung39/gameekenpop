@@ -36,7 +36,7 @@
 .btn-logout:hover{ background: linear-gradient(45deg, #c0392b, #a93226); }
 .btn-reset-admin{ width:100%; padding:12px; background: linear-gradient(45deg, #ef4444, #dc2626); color:white; border:none; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer; margin-top:5px; }
 .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center; }
-.popup-box { background:#1e293b; padding:20px; border-radius:15px; width:90%; max-width:400px; border:2px solid gold; }
+.popup-box { background:#1e293b; padding:20px; border-radius:15px; width:90%; max-width:400px; border:2px solid gold; max-height:80vh; overflow-y:auto; }
 .popup-item { background:#334155; padding:12px; border-radius:10px; margin:10px 0; display:flex; justify-content:space-between; align-items:center; }
 .btn-tukar-popup { background:#22c55e; color:white; padding:8px 12px; }
 .btn-tutup { background:#ef4444; color:white; width:100%; margin-top:15px; }
@@ -93,15 +93,15 @@
 <!-- IKLAN BAWAH 2 KOLOM 160x300 -->
 <div class="ads-bottom-wrap">
   <div class="ads-bottom-box" id="monetag-kiri">
-    <!-- KIRI = MONETAG PINDAH SINI -->
+    <!-- KIRI = MONETAG -->
     <script async data-cfasync="false" src="//nap5k.com/tag.min.js" data-zone="11790593"></script>
   </div>
   
   <div class="ads-bottom-box">
-    <!-- KANAN = ADSTERRA PINDAH SINI -->
+    <!-- KANAN = ADSTERRA -->
     <script type="text/javascript">
       atOptions = {
-        'key' : '7d972344654b992824d432a8e4fa04ad', // KEY KANAN ADSTERRA
+        'key' : '7d972344654b992824d432a8e4fa04ad',
         'format' : 'iframe',
         'height' : 300,
         'width' : 160,
@@ -112,7 +112,27 @@
   </div>
 </div>
 
-<div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
+<!-- POPUP TUKAR KOIN - UDAH RAPI -->
+<div class="popup" id="popupTukar">
+  <div class="popup-box">
+    <h2>TUKAR KOIN DENGAN</h2>
+    
+    <div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div>
+    
+    <div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div>
+    
+    <div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div>
+    
+    <div class="popup-item"><span>4. Ayam Geprek<br><small>15000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Ayam Geprek', 15000)">TUKAR</button></div>
+    
+    <div class="popup-item"><span>5. Es Teh<br><small>2000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Es Teh', 2000)">TUKAR</button></div>
+    
+    <div class="popup-item"><span>6. Nasi Kucing<br><small>5000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Nasi Kucing', 5000)">TUKAR</button></div>
+
+    <button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button>
+  </div>
+</div>
+
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
@@ -261,7 +281,7 @@ function loadData(){
   coinsTxt = document.getElementById('coins');
   powerNowTxt = document.getElementById('powerNow');
   btnPower = document.getElementById('btnPower');
-  btnAuto = document.getElementById('btnAuto');
+  btnAuto = document.getElementById('btnAuto'];
 
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
