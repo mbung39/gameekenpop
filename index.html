@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V23.0 SocialBar</title>
+<title>KenPOP Tap V23.1 SocialBar</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -42,7 +42,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V23.0</h2>
+  <h2>👋 SELAMAT DATANG V23.1</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -81,9 +81,6 @@
 <div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
-
-<!-- SOCIAL BAR ADSTERRA LU - TARUH PALING BAWAH -->
-<script src="https://pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js"></script>
 
 <script>
 let tg = window.Telegram.WebApp; tg.expand();
@@ -140,7 +137,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.0"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.1"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -201,7 +198,7 @@ function loadData(){
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
-    showAd(); // SOCIAL BAR OTOMATIS MUNCUL
+    showAd();
     pAds++;
     pTimer = Date.now();
     if(pAds >= 3){
@@ -215,7 +212,7 @@ function loadData(){
   btnAuto.onclick = () => {
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
-    showAd(); // SOCIAL BAR OTOMATIS MUNCUL
+    showAd();
     aAds++;
     aTimer = Date.now();
     if(aAds >= 6){
@@ -231,12 +228,15 @@ function loadData(){
 }
 
 function showAd() {
-  // GANTI POPUNDER JADI SOCIAL BAR
-  // Social Bar otomatis muncul pas script di load
-  // Jadi kita reload script nya biar muncul lagi
-  let s = document.createElement('script');
-  s.src = "https://pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js?"+Date.now();
-  document.body.appendChild(s);
+  // FIX V23.1: PAKAI IFRAME BIAR SOCIAL BAR MUNCUL TIAP KLIK
+  const iframe = document.createElement('iframe');
+  iframe.src = 'https://pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js';
+  iframe.style.width = '0px';
+  iframe.style.height = '0px';
+  iframe.style.border = '0px';
+  iframe.style.position = 'absolute';
+  document.body.appendChild(iframe);
+  setTimeout(() => iframe.remove(), 4000);
 }
 
 function cekValidasi(type){
