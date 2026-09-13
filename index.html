@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.0 NoReload</title>
+<title>KenPOP Tap V24.1 TimerFix</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -41,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V24.0</h2>
+  <h2>👋 SELAMAT DATANG V24.1</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -92,6 +92,7 @@ function getKey(key){ return key + '_' + currentWA; }
 
 let historyTukar = [];
 let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
+let powerLockEnd, autoLockEnd; // WAKTU SELESAI KUNCI
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 let autoInterval, powerLockTimer, autoLockTimer;
 
@@ -139,7 +140,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.0"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.1"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -149,7 +150,7 @@ async function login() {
     localStorage[getKey('coins')] = 0; localStorage[getKey('power')] = 1; localStorage[getKey('auto')] = 0;
     localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0; localStorage[getKey('autoEnd')] = 0;
     localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0; localStorage[getKey('lastLogin')] = "";
-    localStorage[getKey('historyTukar')] = "[]";
+    localStorage[getKey('historyTukar')] = "[]"; localStorage[getKey('powerLockEnd')] = 0; localStorage[getKey('autoLockEnd')] = 0;
   }
   historyTukar = JSON.parse(localStorage[getKey('historyTukar')] || "[]");
 
@@ -180,6 +181,7 @@ function loadData(){
     localStorage[getKey('power')] = 1; localStorage[getKey('pAds')] = 0; localStorage[getKey('aAds')] = 0;
     localStorage[getKey('lastLogin')] = today;
     localStorage[getKey('pTimer')] = 0; localStorage[getKey('aTimer')] = 0;
+    localStorage[getKey('powerLockEnd')] = 0; localStorage[getKey('autoLockEnd')] = 0;
     if(lastLogin) alert('Selamat Pagi! Bonus Klik +1 direset ke +1');
   }
 
@@ -191,14 +193,23 @@ function loadData(){
   autoEnd = +localStorage[getKey('autoEnd')] || 0;
   pTimer = +localStorage[getKey('pTimer')] || 0;
   aTimer = +localStorage[getKey('aTimer')] || 0;
+  powerLockEnd = +localStorage[getKey('powerLockEnd')] || 0; // AMBIL DARI STORAGE
+  autoLockEnd = +localStorage[getKey('autoLockEnd')] || 0; // AMBIL DARI STORAGE
 
   coinsTxt = document.getElementById('coins');
   powerNowTxt = document.getElementById('powerNow');
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
+  // CEK TIMER PAS LOAD
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
+  }
+  if(Date.now() < powerLockEnd){
+    lockPowerButton(powerLockEnd - Date.now());
+  }
+  if(Date.now() < autoLockEnd){
+    lockAutoButton(autoLockEnd - Date.now());
   }
 
   btnPower.onclick = () => {
@@ -212,9 +223,10 @@ function loadData(){
       alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
     if(pAds >= 2){
-      lockPowerButton(600000); // 10 menit
+      powerLockEnd = Date.now() + 600000; // SIMPEN WAKTU SELESAI
+      lockPowerButton(600000);
     }
-    save(); // HAPUS RELOAD
+    save();
   }
 
   btnAuto.onclick = () => {
@@ -223,12 +235,13 @@ function loadData(){
     aAds++; aTimer = Date.now();
     if(aAds >= 6){
       auto=power; autoEnd=Date.now()+3600000;
+      autoLockEnd = autoEnd; // SIMPEN WAKTU SELESAI
       aAds=0;
       startAutoClick();
-      lockAutoButton(3600000); // 1 JAM
+      lockAutoButton(3600000);
       alert('Auto Aktif 1 Jam!');
     }
-    save(); // HAPUS RELOAD
+    save();
   }
 
   save();
@@ -239,7 +252,7 @@ function startAutoClick(){
   clearInterval(autoInterval);
   autoInterval = setInterval(() => {
     if(Date.now() > autoEnd){
-      auto = 0;
+      auto = 0; autoLockEnd = 0;
       clearInterval(autoInterval);
       save();
       return;
@@ -254,11 +267,13 @@ function lockPowerButton(duration){
   updatePowerTimer(duration);
   clearInterval(powerLockTimer);
   powerLockTimer = setInterval(() => {
-    duration -= 1000;
+    duration = powerLockEnd - Date.now(); // HITUNG DARI WAKTU SELESAI
     if(duration <= 0){
       clearInterval(powerLockTimer);
+      powerLockEnd = 0;
       pAds = 0;
       cekValidasi('power');
+      save();
       return;
     }
     updatePowerTimer(duration);
@@ -270,10 +285,12 @@ function lockAutoButton(duration){
   updateAutoTimer(duration);
   clearInterval(autoLockTimer);
   autoLockTimer = setInterval(() => {
-    duration -= 1000;
+    duration = autoLockEnd - Date.now(); // HITUNG DARI WAKTU SELESAI
     if(duration <= 0){
       clearInterval(autoLockTimer);
+      autoLockEnd = 0;
       cekValidasi('auto');
+      save();
       return;
     }
     updateAutoTimer(duration);
@@ -294,8 +311,8 @@ function cekValidasi(type){
   let ads = type==='power'? pAds : aAds;
   let cooldown = type==='power'? getCooldownPower(ads) : getCooldownAuto(ads);
 
-  if(type === 'power' && pAds >= 2) return;
-  if(type === 'auto' && Date.now() < autoEnd) return;
+  if(type === 'power' && Date.now() < powerLockEnd) return;
+  if(type === 'auto' && Date.now() < autoLockEnd) return;
 
   if(timer > 0 && Date.now() - timer < cooldown){
     let sisa = Math.ceil((cooldown - (Date.now() - timer))/1000);
@@ -357,11 +374,13 @@ function renderHistory(){
 function save(){
   if(!currentWA) return;
   let now = Date.now();
-  if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; clearInterval(autoInterval); }
+  if(now > autoEnd && auto > 0){ auto = 0; aAds = 0; aTimer = 0; autoLockEnd = 0; clearInterval(autoInterval); }
 
   localStorage[getKey('coins')]=coins; localStorage[getKey('power')]=power; localStorage[getKey('auto')]=auto;
   localStorage[getKey('pAds')]=pAds; localStorage[getKey('aAds')]=aAds; localStorage[getKey('autoEnd')]=autoEnd;
   localStorage[getKey('pTimer')]=pTimer; localStorage[getKey('aTimer')]=aTimer;
+  localStorage[getKey('powerLockEnd')]=powerLockEnd; // SIMPAN
+  localStorage[getKey('autoLockEnd')]=autoLockEnd; // SIMPAN
 
   coinsTxt.innerText=coins.toLocaleString('id');
   powerNowTxt.innerText = power;
