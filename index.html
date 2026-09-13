@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.6 AdminReset</title>
+<title>KenPOP Tap V24.7 AdsOnTop</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -43,7 +43,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG DI TAP-TAP KOIN KENPOP</h2>
+  <h2>👋 SELAMAT DATANG V24.7</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -54,11 +54,20 @@
   <h3>Halo <span id="w-nama"></span>!</h3>
   <p>WA: <span id="w-wa"></span></p>
   <button class="btn-logout" onclick="logout()">LOGOUT</button>
-  <button class="btn-reset-admin" onclick="resetAdmin()">🔑 RESET AKUN CHAT ADMIN</button>
+  <button class="btn-reset-admin" onclick="resetAdmin()">🔑 RESET AKUN ADMIN</button>
 </div>
 
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
+
+<!-- IKLAN PINDAH KE SINI BREE DIATAS SHOP -->
+<div id="bannerBox">
+<script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
+<script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
+</div>
+
+<!-- ADSTERRA SOCIAL BAR -->
+<script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
 
 <div class="shop">
   <h2>🛒 SHOP</h2>
@@ -76,19 +85,12 @@
   </div>
 </div>
 
-<div id="bannerBox">
-<script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
-<script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
-</div>
-
-<script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
-
 <div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
 <script>
-const ADMIN_WA = "6285143890586"; // GANTI NOMER WA LU PAKE 62 DISINI BREE
+const ADMIN_WA = "6281234567890"; // GANTI NOMER WA LU PAKE 62 DISINI BREE
 const ADMIN_CODE = "kenpop123"; // GANTI KODE RAHASIA LU DISINI
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
@@ -174,7 +176,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.6"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.7"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
