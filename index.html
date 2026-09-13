@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V23.5 Propeller</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>KenPOP Tap V23.7 Adsterra</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
-  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 80px; }
+  body { background: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; padding-bottom: 120px; } /* padding bawah buat social bar */
   #stats { font-size: 36px; font-weight: bold; margin-bottom: 20px; }
   #logo { width: 220px; height: 220px; background: url('kenpop.png') no-repeat center; background-size: contain; border: none; margin: 20px auto; display: block; transition: transform 0.1s; cursor: pointer; }
   #logo:active { transform: scale(0.88); }
@@ -42,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V23.5</h2>
+  <h2>👋 SELAMAT DATANG V23.7</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -78,15 +77,14 @@
 <script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
 </div>
 
-<!-- PROPELLERADS SCRIPT - GANTI DENGAN PUNYA LU -->
-<script src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
+<!-- ADSTERRA SOCIAL BAR - TARUH DISINI -->
+<script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
 
 <div class="popup" id="popupTukar"><div class="popup-box"><h2>TUKAR KOIN DENGAN</h2><div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div><div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div><div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div><button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button></div></div>
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
 <script>
-let tg = window.Telegram.WebApp; tg.expand();
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
 let currentWA = "";
@@ -95,12 +93,12 @@ function getKey(key){ return key + '_' + currentWA; }
 let historyTukar = [];
 let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
-let autoInterval; // BUAT AUTO CLICK
+let autoInterval;
 
 function getCooldownPower(index){
-  if(index === 0) return 15000; // 15s
-  if(index === 1) return 20000; // 20s
-  return 30000; // 30s
+  if(index === 0) return 15000;
+  if(index === 1) return 20000;
+  return 30000;
 }
 function getCooldownAuto(index){
   if(index === 0) return 15000;
@@ -141,7 +139,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.5"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.7"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -167,7 +165,7 @@ async function login() {
 function logout(){
   if(confirm('Yakin mau logout? \nData koin & power kamu tetap aman di HP ini')){
     save();
-    clearInterval(autoInterval); // MATIIN AUTO PAS LOGOUT
+    clearInterval(autoInterval);
     localStorage.removeItem('kenpopNama');
     localStorage.removeItem('kenpopWA');
     currentWA = "";
@@ -199,7 +197,7 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // JALANKAN AUTO CLICK KALO MASIH AKTIF
+  // JALANKAN AUTO LAGI ABIS RELOAD
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
   }
@@ -208,43 +206,36 @@ function loadData(){
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
-    showAd(); // MUNCULIN IKLAN PROPELLER
-    pAds++;
-    pTimer = Date.now();
+    pAds++; pTimer = Date.now();
     if(pAds >= 3){
       if(power < 50) power++;
       pAds = 0;
       alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
     save();
+    location.reload(); // RELOAD BIAR SOCIAL BAR MUNCUL
   }
 
   btnAuto.onclick = () => {
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
-    showAd(); // MUNCULIN IKLAN PROPELLER
-    aAds++;
-    aTimer = Date.now();
+    aAds++; aTimer = Date.now();
     if(aAds >= 6){
       auto=power; autoEnd=Date.now()+3600000;
       aAds=0;
-      startAutoClick(); // JALANKAN AUTO
+      startAutoClick();
       alert('Auto Aktif 1 Jam!');
     }
     save();
+    location.reload(); // RELOAD BIAR SOCIAL BAR MUNCUL
   }
 
   save();
   setInterval(save, 1000);
 }
 
-function showAd() {
-  // PROPELLERADS BISA DIPANGGIL LANGSUNG
-  if(typeof _pop!== 'undefined') _pop();
-}
-
 function startAutoClick(){
-  clearInterval(autoInterval); // Biar gak dobel
+  clearInterval(autoInterval);
   autoInterval = setInterval(() => {
     if(Date.now() > autoEnd){
       auto = 0;
@@ -254,7 +245,7 @@ function startAutoClick(){
     }
     coins += auto;
     save();
-  }, 1000); // Ngeklik tiap 1 detik
+  }, 1000);
 }
 
 function cekValidasi(type){
