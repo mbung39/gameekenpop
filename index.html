@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V23.9 Timer</title>
+<title>KenPOP Tap V24.0 NoReload</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -41,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V23.9</h2>
+  <h2>👋 SELAMAT DATANG V24.0</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -139,7 +139,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V23.9"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.0"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -197,7 +197,6 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // CEK AUTO MASIH JALAN APA GK
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
   }
@@ -212,12 +211,10 @@ function loadData(){
       pAds = 0;
       alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
-    // KUNCI 10 MENIT KALO UDAH 2/3
     if(pAds >= 2){
       lockPowerButton(600000); // 10 menit
     }
-    save();
-    location.reload();
+    save(); // HAPUS RELOAD
   }
 
   btnAuto.onclick = () => {
@@ -228,11 +225,10 @@ function loadData(){
       auto=power; autoEnd=Date.now()+3600000;
       aAds=0;
       startAutoClick();
-      lockAutoButton(3600000); // KUNCI 1 JAM
+      lockAutoButton(3600000); // 1 JAM
       alert('Auto Aktif 1 Jam!');
     }
-    save();
-    location.reload();
+    save(); // HAPUS RELOAD
   }
 
   save();
@@ -261,7 +257,7 @@ function lockPowerButton(duration){
     duration -= 1000;
     if(duration <= 0){
       clearInterval(powerLockTimer);
-      pAds = 0; // RESET KE 0/3
+      pAds = 0;
       cekValidasi('power');
       return;
     }
@@ -298,8 +294,8 @@ function cekValidasi(type){
   let ads = type==='power'? pAds : aAds;
   let cooldown = type==='power'? getCooldownPower(ads) : getCooldownAuto(ads);
 
-  if(type === 'power' && pAds >= 2) return; // UDAH DIHANDLE LOCK 10 MENIT
-  if(type === 'auto' && Date.now() < autoEnd) return; // UDAH DIHANDLE LOCK 1 JAM
+  if(type === 'power' && pAds >= 2) return;
+  if(type === 'auto' && Date.now() < autoEnd) return;
 
   if(timer > 0 && Date.now() - timer < cooldown){
     let sisa = Math.ceil((cooldown - (Date.now() - timer))/1000);
