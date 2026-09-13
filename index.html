@@ -111,8 +111,7 @@
     <div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div>
     <div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div>
     <div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div>
-    <div class="popup-item"><span>4. Es Teh<br><small>belum tersedia</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Es Teh', belum tersedia)">TUKAR</div>
-       
+    
     <button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button>
   </div>
 </div>
@@ -448,21 +447,7 @@ function tampilStruk(d){
 function renderHistory(){
   let box = document.getElementById('isiHistory');
   if(historyTukar.length === 0){ box.innerHTML = "<p>Belum ada riwayat</p>"; return; }
-  
-  box.innerHTML = "";
-  historyTukar.forEach((d, index) => {
-    let item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `${d.tgl} ${d.jam}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} koin<br>`;
-    
-    let btn = document.createElement('button');
-    btn.className = 'btn-lihat';
-    btn.innerText = 'LIHAT STRUK';
-    btn.onclick = () => tampilStruk(d); // UDAH GA PAKE PETIK2 LAGI
-    
-    item.appendChild(btn);
-    box.appendChild(item);
-  });
+  box.innerHTML = historyTukar.map((d) => `<div class="history-item">${d.tgl} ${d.jam}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} koin<br><button class="btn-lihat" onclick='tampilStruk(${JSON.stringify(d).replace(/'/g, "&apos;")})'>LIHAT STRUK</button></div>`).join('');
 }
 
 function save(){
