@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.9.1 FixHistory</title>
+<title>KenPOP Tap V25.0 Trivia</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -22,7 +22,7 @@
   #float { position: absolute; color: gold; font-size: 26px; font-weight: 900; animation: float 0.8s forwards; pointer-events: none; }
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
   #bannerBox { width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0; }
-  
+
 .ads-bottom-wrap { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
 .ads-bottom-box { width: 160px; height: 300px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
@@ -42,6 +42,14 @@
 .struk { text-align:left; background:#0f172a; padding:15px; border-radius:10px; border:1px dashed #22c55e; }
 .history-item { background:#334155; padding:10px; border-radius:8px; margin:8px 0; text-align:left; font-size:14px; }
 .btn-lihat { background:#3b82f6; padding:5px 10px; font-size:12px; }
+
+/* ============== CSS TRIVIA BARU ============== */
+.popup-trivia { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; justify-content:center; align-items:center; }
+.trivia-box { background:linear-gradient(45deg, #f59e0b, #ef4444); padding:25px; border-radius:20px; width:90%; max-width:400px; border:3px solid gold; text-align:center; }
+.trivia-box h1 { font-size:32px; color:white; margin:0; text-shadow:2px 2px 4px #000; }
+.trivia-box h2 { font-size:20px; color:#fffbeb; margin:15px 0; line-height:1.4; }
+.trivia-box p { font-size:14px; color:#fde047; }
+.btn-lanjut { background:white; color:#ef4444; padding:12px 20px; border-radius:10px; font-weight:bold; margin-top:15px; width:100%; }
 </style>
 </head>
 <body>
@@ -111,13 +119,28 @@
     <div class="popup-item"><span>1. KenPoP<br><small>100000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 100000)">TUKAR</button></div>
     <div class="popup-item"><span>2. Kentang Goreng<br><small>75000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 75000)">TUKAR</button></div>
     <div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>75000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 75000)">TUKAR</button></div>
-    
+
     <button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button>
   </div>
 </div>
 
 <div class="popup" id="popupStruk"><div class="popup-box"><h2>STRUK PENUKARAN</h2><div class="struk" id="isiStruk"></div><button class="btn-tutup" onclick="tutupPopup('popupStruk')">TUTUP</button></div></div>
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
+
+<!-- ============== POPUP TRIVIA BARU ============== -->
+<div class="popup-trivia" id="popupTrivia">
+  <div class="trivia-box">
+    <h1>TAHU? KAMU TAHU?</h1>
+    <h2 id="triviaText">Loading...</h2>
+    <p id="triviaCounter">Trivia 1/50</p>
+    <!-- SLOT IKLAN TRIVIA -->
+    <div style="margin:15px 0; background:#000; min-height:50px; display:flex; align-items:center; justify-content:center;">
+      <script type="text/javascript">atOptions = { 'key' : 'MONETAG_TRIVIA_KEY', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
+      <script type="text/javascript" src="//www.highrevenueformat.com/MONETAG_TRIVIA_KEY/invoke.js"></script>
+    </div>
+    <button class="btn-lanjut" onclick="tutupTrivia()">LANJUT MAIN</button>
+  </div>
+</div>
 
 <script>
 const ADMIN_WA = "6281234567890";
@@ -132,6 +155,61 @@ let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
 let powerLockEnd, autoLockEnd;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 let autoInterval, powerLockTimer, autoLockTimer, cooldownInterval;
+
+// ============== VAR TRIVIA BARU ==============
+let tapCounter = 0;
+let triviaIndex = 0;
+const daftarTrivia = [
+  "Tahukah kamu? Madu tidak pernah basi. Madu 3000 tahun masih bisa dimakan!",
+  "Gol 'Tangan Tuhan' Diego Maradona terjadi di Piala Dunia 1986",
+  "Otak manusia menghasilkan listrik cukup untuk nyalain lampu kecil",
+  "Pisang secara alami radioaktif karena mengandung Kalium-40",
+  "Cristiano Ronaldo punya 5 Ballon d'Or",
+  "Seekor gurita punya 3 jantung dan darah berwarna biru",
+  "Air panas membeku lebih cepat dari air dingin. Namanya Efek Mpemba",
+  "Lionel Messi memenangkan Piala Dunia 2022 bersama Argentina",
+  "Tikus bisa tertawa ketika digelitik",
+  "Gunung Everest bertambah tinggi sekitar 4mm setiap tahun",
+  "Kecoa bisa hidup 1 minggu tanpa kepala",
+  "Wasit pertama kali pakai kartu kuning di Piala Dunia 1970",
+  "Mata udang mantis bisa melihat 12 warna. Manusia cuma 3",
+  "Gol tercepat di Piala Dunia: Hakan Sukur 11 detik 2002",
+  "Satu sendok teh madu = Kerja seumur hidup 12 lebah",
+  "Stadion terbesar di dunia: Rungrado 1 Mei di Korea Utara",
+  "Jantung paus biru sebesar mobil kecil",
+  "Piala Dunia diadakan setiap 4 tahun sekali",
+  "Bayi lahir dengan 300 tulang. Dewasa tinggal 206",
+  "Negara terkecil di dunia: Vatikan. Luasnya 0.44 km2",
+  "Lebah bisa mengenali wajah manusia",
+  "Pemain termuda di Piala Dunia: Norman Whiteside 17 tahun",
+  "Cumi-cumi raksasa punya mata sebesar bola basket",
+  "1 Hari di Venus lebih lama dari 1 Tahun di Venus",
+  "Top skor sepanjang masa Piala Dunia: Miroslav Klose 16 gol",
+  "Kucing tidak bisa merasakan rasa manis",
+  "Lari 100m tercepat: Usain Bolt 9.58 detik",
+  "Hiu sudah ada sebelum pohon ada di bumi",
+  "Satu-satunya negara yang main di semua Piala Dunia: Brasil",
+  "Ubur-ubur Turritopsis bisa hidup abadi",
+  "Penciuman anjing 100.000x lebih kuat dari manusia",
+  "Kartu merah pertama di Piala Dunia: Carlos Caszely 1974",
+  "Cokelat pernah dipakai sebagai mata uang oleh Suku Aztec",
+  "Stadion Maracana pernah isi 199.854 penonton",
+  "Otak manusia 73% nya adalah air",
+  "Penalty pertama di Piala Dunia: 1930 oleh Rumania",
+  "Burung kolibri bisa terbang mundur",
+  "Negara dengan pemain Piala Dunia terbanyak: Jerman",
+  "Lidah jerapah panjangnya 50cm buat ambil daun",
+  "Gol bunuh diri tercepat: 6 detik di liga Inggris",
+  "Mata manusia bisa bedain 10 juta warna",
+  "Timnas Brasil 5x juara Piala Dunia. Terbanyak",
+  "Kecebong bernafas dengan insang. Katak dengan paru-paru",
+  "Satu-satunya Piala Dunia di Asia: Korea-Jepang 2002",
+  "Gigi manusia sekeras batu granit",
+  "Penjaga gawang termuda di Piala Dunia: 18 tahun",
+  "Pohon tertua di dunia umur 5000 tahun",
+  "Hat-trick tercepat di Piala Dunia: 4 menit",
+  "Kamu baca trivia ini sambil buang waktu 2 detik 😂"
+];
 
 function getCooldownPower(index){
   if(index === 0) return 15000;
@@ -156,23 +234,11 @@ function resetAdmin(){
   if(kode === ADMIN_CODE){
     if(confirm(`YAKIN HAPUS TOTAL DATA AKUN ${localStorage.kenpopWA}?`)){
       let wa = localStorage.kenpopWA;
-      
-      // HAPUS SEMUA KEY MILIK NOMER INI
-      localStorage.removeItem('kenpopWA');
-      localStorage.removeItem('kenpopNama');
-      localStorage.removeItem('coins_' + wa);
-      localStorage.removeItem('power_' + wa);
-      localStorage.removeItem('auto_' + wa);
-      localStorage.removeItem('pAds_' + wa);
-      localStorage.removeItem('aAds_' + wa);
-      localStorage.removeItem('autoEnd_' + wa);
-      localStorage.removeItem('pTimer_' + wa);
-      localStorage.removeItem('aTimer_' + wa);
-      localStorage.removeItem('lastLogin_' + wa);
-      localStorage.removeItem('historyTukar_' + wa);
-      localStorage.removeItem('powerLockEnd_' + wa);
-      localStorage.removeItem('autoLockEnd_' + wa);
-      
+      localStorage.removeItem('kenpopWA'); localStorage.removeItem('kenpopNama');
+      localStorage.removeItem('coins_' + wa); localStorage.removeItem('power_' + wa); localStorage.removeItem('auto_' + wa);
+      localStorage.removeItem('pAds_' + wa); localStorage.removeItem('aAds_' + wa); localStorage.removeItem('autoEnd_' + wa);
+      localStorage.removeItem('pTimer_' + wa); localStorage.removeItem('aTimer_' + wa); localStorage.removeItem('lastLogin_' + wa);
+      localStorage.removeItem('historyTukar_' + wa); localStorage.removeItem('powerLockEnd_' + wa); localStorage.removeItem('autoLockEnd_' + wa);
       alert("✅ DATA TOTAL TERHAPUS! HP sudah bisa daftar ulang dari 0");
       location.reload();
     }
@@ -195,7 +261,16 @@ window.onload = function() {
   document.getElementById('logo').onclick = (e) => {
     if(!currentWA) return;
     let totalKlik = power + auto;
-    coins += totalKlik; showPlus('+'+totalKlik, e); save();
+    coins += totalKlik; showPlus('+'+totalKlik, e);
+
+    // ============== TRIVIA 50x KLIK ==============
+    tapCounter++;
+    if(tapCounter >= 50){
+      showTrivia();
+      tapCounter = 0;
+    }
+
+    save();
   }
 
   startCooldownTimer();
@@ -220,7 +295,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.9.1"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V25.0"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -280,30 +355,17 @@ function loadData(){
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  if(auto > 0 && Date.now() < autoEnd){
-    startAutoClick();
-  }
-  if(Date.now() < powerLockEnd){
-    lockPowerButton(powerLockEnd - Date.now());
-  }
-  if(Date.now() < autoLockEnd){
-    lockAutoButton(autoLockEnd - Date.now());
-  }
+  if(auto > 0 && Date.now() < autoEnd){ startAutoClick(); }
+  if(Date.now() < powerLockEnd){ lockPowerButton(powerLockEnd - Date.now()); }
+  if(Date.now() < autoLockEnd){ lockAutoButton(autoLockEnd - Date.now()); }
 
   btnPower.onclick = () => {
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
     pAds++; pTimer = Date.now();
-    if(pAds >= 3){
-      if(power < 50) power++;
-      pAds = 0;
-      alert(`Klik +1 Naik! Sekarang Total = +${power}`);
-    }
-    if(pAds >= 2){
-      powerLockEnd = Date.now() + 600000;
-      lockPowerButton(600000);
-    }
+    if(pAds >= 3){ if(power < 50) power++; pAds = 0; alert(`Klik +1 Naik! Sekarang Total = +${power}`); }
+    if(pAds >= 2){ powerLockEnd = Date.now() + 600000; lockPowerButton(600000); }
     save();
   }
 
@@ -311,14 +373,7 @@ function loadData(){
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
     aAds++; aTimer = Date.now();
-    if(aAds >= 6){
-      auto=power; autoEnd=Date.now()+3600000;
-      autoLockEnd = autoEnd;
-      aAds=0;
-      startAutoClick();
-      lockAutoButton(3600000);
-      alert('Auto Aktif 1 Jam!');
-    }
+    if(aAds >= 6){ auto=power; autoEnd=Date.now()+3600000; autoLockEnd = autoEnd; aAds=0; startAutoClick(); lockAutoButton(3600000); alert('Auto Aktif 1 Jam!'); }
     save();
   }
 
@@ -326,77 +381,53 @@ function loadData(){
   setInterval(save, 1000);
 }
 
+// ============== FUNGSI TRIVIA BARU ==============
+function showTrivia(){
+  document.getElementById('triviaText').innerText = daftarTrivia[triviaIndex];
+  document.getElementById('triviaCounter').innerText = `Trivia ${triviaIndex+1}/${daftarTrivia.length}`;
+  document.getElementById('popupTrivia').style.display = 'flex';
+  triviaIndex = (triviaIndex + 1) % daftarTrivia.length;
+}
+
+function tutupTrivia(){
+  document.getElementById('popupTrivia').style.display = 'none';
+}
+
 function startCooldownTimer(){
   clearInterval(cooldownInterval);
   cooldownInterval = setInterval(() => {
     if(!btnPower ||!btnAuto) return;
-    if(Date.now() < powerLockEnd){
-      updatePowerTimer(powerLockEnd - Date.now());
-    } else {
-      cekValidasi('power');
-    }
-    if(Date.now() < autoLockEnd){
-      updateAutoTimer(autoLockEnd - Date.now());
-    } else {
-      cekValidasi('auto');
-    }
+    if(Date.now() < powerLockEnd){ updatePowerTimer(powerLockEnd - Date.now()); } else { cekValidasi('power'); }
+    if(Date.now() < autoLockEnd){ updateAutoTimer(autoLockEnd - Date.now()); } else { cekValidasi('auto'); }
   }, 1000);
 }
 
 function startAutoClick(){
   clearInterval(autoInterval);
   autoInterval = setInterval(() => {
-    if(Date.now() > autoEnd){
-      auto = 0; autoLockEnd = 0;
-      clearInterval(autoInterval);
-      save();
-      return;
-    }
-    coins += auto;
-    save();
+    if(Date.now() > autoEnd){ auto = 0; autoLockEnd = 0; clearInterval(autoInterval); save(); return; }
+    coins += auto; save();
   }, 1000);
 }
 
 function lockPowerButton(duration){
-  btnPower.disabled = true;
-  updatePowerTimer(duration);
-  clearInterval(powerLockTimer);
+  btnPower.disabled = true; updatePowerTimer(duration); clearInterval(powerLockTimer);
   powerLockTimer = setInterval(() => {
     duration = powerLockEnd - Date.now();
-    if(duration <= 0){
-      clearInterval(powerLockTimer);
-      powerLockEnd = 0;
-      pAds = 0;
-      cekValidasi('power');
-      save();
-      return;
-    }
+    if(duration <= 0){ clearInterval(powerLockTimer); powerLockEnd = 0; pAds = 0; cekValidasi('power'); save(); return; }
   }, 1000);
 }
 
 function lockAutoButton(duration){
-  btnAuto.disabled = true;
-  updateAutoTimer(duration);
-  clearInterval(autoLockTimer);
+  btnAuto.disabled = true; updateAutoTimer(duration); clearInterval(autoLockTimer);
   autoLockTimer = setInterval(() => {
     duration = autoLockEnd - Date.now();
-    if(duration <= 0){
-      clearInterval(autoLockTimer);
-      autoLockEnd = 0;
-      cekValidasi('auto');
-      save();
-      return;
-    }
+    if(duration <= 0){ clearInterval(autoLockTimer); autoLockEnd = 0; cekValidasi('auto'); save(); return; }
   }, 1000);
 }
 
-function updatePowerTimer(ms){
-  btnPower.innerText = `🔒 Tunggu ${formatTime(ms)}`;
-}
-
-function updateAutoTimer(ms){
-  btnAuto.innerText = `🔒 ${formatTime(ms)}`;
-}
+function updatePowerTimer(ms){ btnPower.innerText = `🔒 Tunggu ${formatTime(ms)}`; }
+function updateAutoTimer(ms){ btnAuto.innerText = `🔒 ${formatTime(ms)}`; }
 
 function cekValidasi(type){
   let btn = type==='power'? btnPower : btnAuto;
@@ -461,22 +492,19 @@ function tampilStruk(d){
 // FIX V24.9.1 - ANTI STUCK
 function renderHistory(){
   let box = document.getElementById('isiHistory');
-  if(historyTukar.length === 0){ 
-    box.innerHTML = "<p>Belum ada riwayat penukaran</p>"; 
-    return; 
-  }
-  
+  if(historyTukar.length === 0){ box.innerHTML = "<p>Belum ada riwayat penukaran</p>"; return; }
+
   box.innerHTML = "";
   historyTukar.forEach((d) => {
     let item = document.createElement('div');
     item.className = 'history-item';
     item.innerHTML = `${d.tgl} ${d.jam}<br>Menu: ${d.menu}<br>Harga: ${d.harga.toLocaleString('id')} koin<br>`;
-    
+
     let btn = document.createElement('button');
     btn.className = 'btn-lihat';
     btn.innerText = 'LIHAT STRUK';
     btn.onclick = () => tampilStruk(d);
-    
+
     item.appendChild(btn);
     box.appendChild(item);
   });
