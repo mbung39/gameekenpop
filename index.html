@@ -23,7 +23,6 @@
   @keyframes float { from {opacity:1; transform: translateY(0);} to {opacity:0; transform: translateY(-50px);} }
   #bannerBox { width: 100%; min-height: 60px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; margin: 15px 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px 0; }
   
-/* TAMBAHAN BUAT 2 IKLAN BAWAH */
 .ads-bottom-wrap { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
 .ads-bottom-box { width: 160px; height: 300px; background: #1e293b; border: 3px solid #fb923c; border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
@@ -65,13 +64,11 @@
 <div id="stats">Koin: <span id="coins">0</span></div>
 <button id="logo"></button>
 
-<!-- IKLAN ATAS 320x50 -->
 <div id="bannerBox">
 <script type="text/javascript">atOptions = { 'key' : 'c68d59594618ef2d0218af656ac91b4c', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
 <script type="text/javascript" src="//www.highrevenueformat.com/c68d59594618ef2d0218af656ac91b4c/invoke.js"></script>
 </div>
 
-<!-- ADSTERRA SOCIAL BAR -->
 <script type='text/javascript' src='//pl31304625.profitableratecpmnetwork.com/70/3c/2a/703c2a82d8b893a48665901b0057ef58.js'></script>
 
 <div class="shop">
@@ -90,15 +87,11 @@
   </div>
 </div>
 
-<!-- IKLAN BAWAH 2 KOLOM 160x300 -->
 <div class="ads-bottom-wrap">
   <div class="ads-bottom-box" id="monetag-kiri">
-    <!-- KIRI = MONETAG -->
     <script async data-cfasync="false" src="//nap5k.com/tag.min.js" data-zone="11790593"></script>
   </div>
-  
   <div class="ads-bottom-box">
-    <!-- KANAN = ADSTERRA -->
     <script type="text/javascript">
       atOptions = {
         'key' : '7d972344654b992824d432a8e4fa04ad',
@@ -112,23 +105,15 @@
   </div>
 </div>
 
-<!-- POPUP TUKAR KOIN - UDAH RAPI -->
 <div class="popup" id="popupTukar">
   <div class="popup-box">
     <h2>TUKAR KOIN DENGAN</h2>
-    
     <div class="popup-item"><span>1. KenPoP<br><small>10000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('KenPoP', 10000)">TUKAR</button></div>
-    
     <div class="popup-item"><span>2. Kentang Goreng<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Kentang Goreng', 7500)">TUKAR</button></div>
-    
     <div class="popup-item"><span>3. Mix KenPoP+Kentang<br><small>7500 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Mix KenPoP+Kentang', 7500)">TUKAR</button></div>
-    
     <div class="popup-item"><span>4. Ayam Geprek<br><small>15000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Ayam Geprek', 15000)">TUKAR</button></div>
-    
     <div class="popup-item"><span>5. Es Teh<br><small>2000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Es Teh', 2000)">TUKAR</button></div>
-    
     <div class="popup-item"><span>6. Nasi Kucing<br><small>5000 koin</small></span><button class="btn-tukar-popup" onclick="prosesTukar('Nasi Kucing', 5000)">TUKAR</button></div>
-
     <button class="btn-tutup" onclick="tutupPopup('popupTukar')">TUTUP</button>
   </div>
 </div>
@@ -137,8 +122,8 @@
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
 <script>
-const ADMIN_WA = "6281234567890"; // GANTI NOMER WA LU PAKE 62 DISINI BREE
-const ADMIN_CODE = "kenpop123"; // GANTI KODE RAHASIA LU DISINI
+const ADMIN_WA = "6281234567890";
+const ADMIN_CODE = "kenpop123";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
 let currentWA = "";
@@ -281,7 +266,7 @@ function loadData(){
   coinsTxt = document.getElementById('coins');
   powerNowTxt = document.getElementById('powerNow');
   btnPower = document.getElementById('btnPower');
-  btnAuto = document.getElementById('btnAuto'];
+  btnAuto = document.getElementById('btnAuto'); // UDAH DIBENERIN
 
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
