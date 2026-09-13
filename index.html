@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KenPOP Tap V24.1 TimerFix</title>
+<title>KenPOP Tap V25.0 Monetag</title>
 
 <style>
     * { -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-user-select: none; user-select: none; outline: none; }
@@ -41,7 +41,7 @@
 <body>
 
 <div class="login-box" id="loginBox">
-  <h2>👋 SELAMAT DATANG V24.1</h2>
+  <h2>👋 SELAMAT DATANG V25.0</h2>
   <input type="text" id="nama" placeholder="Nama Kamu" required>
   <input type="tel" id="wa" placeholder="No. WhatsApp 08xxxx" required>
   <button class="btn-login" onclick="login()">MASUK GAME</button>
@@ -85,6 +85,20 @@
 <div class="popup" id="popupHistory"><div class="popup-box"><h2>RIWAYAT PENUKARAN</h2><div id="isiHistory" style="max-height:300px; overflow-y:auto;"></div><button class="btn-tutup" onclick="tutupPopup('popupHistory')">TUTUP</button></div></div>
 
 <script>
+// ========== MONETAG CONFIG ==========
+const MONETAG_ZONE_ID = '11789393';
+let monetagLoaded = false;
+function loadMonetagAd(){
+  if(monetagLoaded) return; // cegah double load
+  monetagLoaded = true;
+  let s = document.createElement('script');
+  s.dataset.zone = MONETAG_ZONE_ID;
+  s.src = 'https://al5sm.com/tag.min.js';
+  document.body.appendChild(s);
+  setTimeout(()=>{ monetagLoaded = false }, 3000); // reset setelah 3 detik biar bisa klik lagi
+}
+// ========== END MONETAG CONFIG ==========
+
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTe8t2UIqM_mxzxCjZiVsfomW2qsmdOsaigTBa92vbCCBvkmdlY4Jse_Dbxiei2Fzznw/exec";
 
 let currentWA = "";
@@ -92,7 +106,7 @@ function getKey(key){ return key + '_' + currentWA; }
 
 let historyTukar = [];
 let coins, power, auto, pAds, aAds, autoEnd, pTimer, aTimer;
-let powerLockEnd, autoLockEnd; // WAKTU SELESAI KUNCI
+let powerLockEnd, autoLockEnd;
 let coinsTxt, powerNowTxt, btnPower, btnAuto;
 let autoInterval, powerLockTimer, autoLockTimer;
 
@@ -140,7 +154,7 @@ async function login() {
   }
 
   btn.disabled = true; btn.innerText = 'MEMPROSES...';
-  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V24.1"}) });
+  await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nama, wa, menu:"LOGIN BARU V25.0"}) });
 
   currentWA = wa;
   localStorage.kenpopNama = nama;
@@ -193,15 +207,14 @@ function loadData(){
   autoEnd = +localStorage[getKey('autoEnd')] || 0;
   pTimer = +localStorage[getKey('pTimer')] || 0;
   aTimer = +localStorage[getKey('aTimer')] || 0;
-  powerLockEnd = +localStorage[getKey('powerLockEnd')] || 0; // AMBIL DARI STORAGE
-  autoLockEnd = +localStorage[getKey('autoLockEnd')] || 0; // AMBIL DARI STORAGE
+  powerLockEnd = +localStorage[getKey('powerLockEnd')] || 0;
+  autoLockEnd = +localStorage[getKey('autoLockEnd')] || 0;
 
   coinsTxt = document.getElementById('coins');
   powerNowTxt = document.getElementById('powerNow');
   btnPower = document.getElementById('btnPower');
   btnAuto = document.getElementById('btnAuto');
 
-  // CEK TIMER PAS LOAD
   if(auto > 0 && Date.now() < autoEnd){
     startAutoClick();
   }
@@ -216,6 +229,9 @@ function loadData(){
     if(power >= 50) return;
     let cooldown = getCooldownPower(pAds);
     if(Date.now() - pTimer < cooldown) return;
+
+    loadMonetagAd(); // PANGGIL IKLAN MONETAG DULU
+
     pAds++; pTimer = Date.now();
     if(pAds >= 3){
       if(power < 50) power++;
@@ -223,7 +239,7 @@ function loadData(){
       alert(`Klik +1 Naik! Sekarang Total = +${power}`);
     }
     if(pAds >= 2){
-      powerLockEnd = Date.now() + 600000; // SIMPEN WAKTU SELESAI
+      powerLockEnd = Date.now() + 600000;
       lockPowerButton(600000);
     }
     save();
@@ -232,10 +248,13 @@ function loadData(){
   btnAuto.onclick = () => {
     let cooldown = getCooldownAuto(aAds);
     if(Date.now() - aTimer < cooldown) return;
+
+    loadMonetagAd(); // PANGGIL IKLAN MONETAG DULU
+
     aAds++; aTimer = Date.now();
     if(aAds >= 6){
       auto=power; autoEnd=Date.now()+3600000;
-      autoLockEnd = autoEnd; // SIMPEN WAKTU SELESAI
+      autoLockEnd = autoEnd;
       aAds=0;
       startAutoClick();
       lockAutoButton(3600000);
@@ -267,7 +286,7 @@ function lockPowerButton(duration){
   updatePowerTimer(duration);
   clearInterval(powerLockTimer);
   powerLockTimer = setInterval(() => {
-    duration = powerLockEnd - Date.now(); // HITUNG DARI WAKTU SELESAI
+    duration = powerLockEnd - Date.now();
     if(duration <= 0){
       clearInterval(powerLockTimer);
       powerLockEnd = 0;
@@ -285,7 +304,7 @@ function lockAutoButton(duration){
   updateAutoTimer(duration);
   clearInterval(autoLockTimer);
   autoLockTimer = setInterval(() => {
-    duration = autoLockEnd - Date.now(); // HITUNG DARI WAKTU SELESAI
+    duration = autoLockEnd - Date.now();
     if(duration <= 0){
       clearInterval(autoLockTimer);
       autoLockEnd = 0;
@@ -379,8 +398,8 @@ function save(){
   localStorage[getKey('coins')]=coins; localStorage[getKey('power')]=power; localStorage[getKey('auto')]=auto;
   localStorage[getKey('pAds')]=pAds; localStorage[getKey('aAds')]=aAds; localStorage[getKey('autoEnd')]=autoEnd;
   localStorage[getKey('pTimer')]=pTimer; localStorage[getKey('aTimer')]=aTimer;
-  localStorage[getKey('powerLockEnd')]=powerLockEnd; // SIMPAN
-  localStorage[getKey('autoLockEnd')]=autoLockEnd; // SIMPAN
+  localStorage[getKey('powerLockEnd')]=powerLockEnd;
+  localStorage[getKey('autoLockEnd')]=autoLockEnd;
 
   coinsTxt.innerText=coins.toLocaleString('id');
   powerNowTxt.innerText = power;
